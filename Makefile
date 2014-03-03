@@ -20,7 +20,11 @@ LH_OBJ = $(OBJ)/libstb-hal
 N_SRC  = $(SOURCE)/neutrino-mp
 N_OBJ  = $(OBJ)/neutrino-mp
 
-MY_PATCHES = $(PWD)/patches/neutrino-mp.pc.diff
+PATCHES = $(PWD)/patches
+
+N_PATCHES = $(PATCHES)/neutrino-mp.pc.diff
+
+LH_PATCHES =
 
 CFLAGS =  -funsigned-char -g -W -Wall -Wshadow -O2
 CFLAGS += -rdynamic
@@ -71,6 +75,10 @@ libstb-hal: $(LH_OBJ)/config.status
 	$(MAKE) -C $(LH_OBJ) CC="ccache gcc" CXX="ccache g++" install
 
 $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
+	for i in $(LH_PATCHES); do \
+		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
+		cd $(LH_SRC) && patch -p1 -i $$i; \
+	done;
 	$(LH_SRC)/autogen.sh
 	set -e; cd $(LH_OBJ); \
 		$(LH_SRC)/configure --enable-maintainer-mode \
@@ -78,7 +86,7 @@ $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
 # --enable-gstreamer=yes
 
 $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
-	for i in $(MY_PATCHES); do \
+	for i in $(N_PATCHES); do \
 		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
 		cd $(N_SRC) && patch -p1 -i $$i; \
 	done;
