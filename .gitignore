@@ -1,0 +1,5 @@
+generic
+obj
+source
+own_build/*
+!own_build
