@@ -124,9 +124,13 @@ $(SOURCE):
 
 $(LH_SRC): | $(SOURCE)
 	cd $(SOURCE) && git clone -b next git@gitorious.org:neutrino-hd/max10s-libstb-hal.git libstb-hal
+	rm -rf $(SOURCE)/libstb-hal.org
+	cp -ra $(SOURCE)/libstb-hal $(SOURCE)/libstb-hal.org
 
 $(N_SRC): | $(SOURCE)
 	cd $(SOURCE) && git clone -b next git@gitorious.org:neutrino-mp/max10s-neutrino-mp.git neutrino-mp
+	rm -rf $(SOURCE)/neutrino-mp.org
+	cp -ra $(SOURCE)/neutrino-mp $(SOURCE)/neutrino-mp.org
 
 checkout: $(SOURCE)/libstb-hal $(SOURCE)/neutrino-mp
 
@@ -138,6 +142,14 @@ clean:
 update: 
 	cd $(LH_SRC) && git pull
 	cd $(N_SRC) && git pull
+
+diff:
+	mkdir -p $(PWD)/own_patch
+	cd $(SOURCE) && \
+	diff -NEbur --exclude-from=$(PWD)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.diff ; [ $$? -eq 1 ]
+	cd $(SOURCE) && \
+	diff -NEbur --exclude-from=$(PWD)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.diff ; [ $$? -eq 1 ]
+
 
 # ffmpeg parameters taken from max-git - used to build ffmpeg to our custom lib dir
 FFMPEG_CONFIGURE  = --disable-static --enable-shared --enable-small --disable-runtime-cpudetect

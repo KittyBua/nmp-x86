@@ -1,0 +1,17 @@
+.svn
+.git
+*.in
+*.orig
+*.rej
+*.m4
+autom4te.cache
+config.guess
+config.sub
+configure
+depcomp
+INSTALL
+install-sh
+ltmain.sh
+missing
+rcsim.h
+
