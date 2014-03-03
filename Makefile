@@ -20,6 +20,8 @@ LH_OBJ = $(OBJ)/libstb-hal
 N_SRC  = $(SOURCE)/neutrino-mp
 N_OBJ  = $(OBJ)/neutrino-mp
 
+MY_PATCHES = $(PWD)/patches/neutrino-mp.pc.diff
+
 CFLAGS =  -funsigned-char -g -W -Wall -Wshadow -O2
 CFLAGS += -rdynamic
 CFLAGS += -DPEDANTIC_VALGRIND_SETUP
@@ -76,6 +78,10 @@ $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
 # --enable-gstreamer=yes
 
 $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
+	for i in $(MY_PATCHES); do \
+		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
+		cd $(N_SRC) && patch -p1 -i $$i; \
+	done;
 	$(N_SRC)/autogen.sh
 	set -e; cd $(N_OBJ); \
 		$(N_SRC)/configure --enable-maintainer-mode \
