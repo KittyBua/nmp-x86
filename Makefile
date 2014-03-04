@@ -52,7 +52,7 @@ export LD_LIBRARY_PATH=$(DEST)/lib
 ### in case no frontend is available
 export SIMULATE_FE=1
 export HAL_NOAVDEC=1
-expert HAL_DEBUG=0xff
+export HAL_DEBUG=0xff
 
 CXXFLAGS = $(CFLAGS)
 
@@ -123,12 +123,12 @@ $(SOURCE):
 	mkdir $@
 
 $(LH_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone -b next git@gitorious.org:neutrino-hd/max10s-libstb-hal.git libstb-hal
+	cd $(SOURCE) && git clone -b next https://git.gitorious.org/neutrino-hd/max10s-libstb-hal.git libstb-hal
 	rm -rf $(SOURCE)/libstb-hal.org
 	cp -ra $(SOURCE)/libstb-hal $(SOURCE)/libstb-hal.org
 
 $(N_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone -b next git@gitorious.org:neutrino-mp/max10s-neutrino-mp.git neutrino-mp
+	cd $(SOURCE) && git clone -b next https://git.gitorious.org/neutrino-mp/max10s-neutrino-mp.git neutrino-mp
 	rm -rf $(SOURCE)/neutrino-mp.org
 	cp -ra $(SOURCE)/neutrino-mp $(SOURCE)/neutrino-mp.org
 
