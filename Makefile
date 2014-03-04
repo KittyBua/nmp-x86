@@ -187,13 +187,14 @@ ffmpeg: $(SOURCE)/ffmpeg-2.0.2.tar.bz2
 
 # we also need lua in our custom lib dir
 $(SOURCE)/lua-5.2.2.tar.gz: | $(SOURCE)
-	cd $(SOURCE) && curl -R -O http://www.lua.org/ftp/lua-5.2.2.tar.gz; \
-	tar zxf lua-5.2.2.tar.gz;
+	cd $(SOURCE) && wget http://www.lua.org/ftp/lua-5.2.2.tar.gz
 
 lua: $(SOURCE)/lua-5.2.2.tar.gz
-	cd $(SOURCE)/lua-5.2.2 && $(MAKE) linux; \
-	$(MAKE) install INSTALL_TOP=$(DEST); \
-	rm -rf $(DEST)/man
+	tar -C $(SOURCE) -xf $(SOURCE)/lua-5.2.2.tar.gz
+	set -e; cd $(SOURCE)/lua-5.2.2; \
+		$(MAKE) linux; \
+		$(MAKE) install INSTALL_TOP=$(DEST); \
+		rm -rf $(DEST)/man
 
 
 # libdvbsi is not commonly packaged for linux distributions...
