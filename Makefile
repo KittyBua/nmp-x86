@@ -21,6 +21,7 @@ N_SRC  = $(SOURCE)/neutrino-mp
 N_OBJ  = $(OBJ)/neutrino-mp
 
 PATCHES = $(PWD)/patches
+PATCH = patch -p1 -i $(PATCHES)
 
 N_PATCHES = $(PATCHES)/neutrino-mp.pc.diff
 
@@ -175,36 +176,59 @@ FFMPEG_CONFIGURE += --enable-parser=mjpeg
 FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-debug
 FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-stripping
 
-$(SOURCE)/ffmpeg-2.0.2.tar.bz2: | $(SOURCE)
-	cd $(SOURCE) && wget http://www.ffmpeg.org/releases/ffmpeg-2.0.2.tar.bz2
+#
+FFMPEG_VER=2.1.4
+#
+$(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2: | $(SOURCE)
+	cd $(SOURCE) && wget http://www.ffmpeg.org/releases/ffmpeg-$(FFMPEG_VER).tar.bz2
 
-ffmpeg: $(SOURCE)/ffmpeg-2.0.2.tar.bz2
-	tar -C $(SOURCE) -xf $(SOURCE)/ffmpeg-2.0.2.tar.bz2
-	set -e; cd $(SOURCE)/ffmpeg-2.0.2; \
+ffmpeg: $(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2
+	tar -C $(SOURCE) -xf $(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2
+	set -e; cd $(SOURCE)/ffmpeg-$(FFMPEG_VER); \
 		./configure --prefix=$(DEST) $(FFMPEG_CONFIGURE) ; \
 		$(MAKE); \
 		make install
 
-# we also need lua in our custom lib dir
-$(SOURCE)/lua-5.2.2.tar.gz: | $(SOURCE)
-	cd $(SOURCE) && wget http://www.lua.org/ftp/lua-5.2.2.tar.gz
+# luaposix: posix bindings for lua
+#
+LUAPOSIX_VER=31
+#
+$(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz: | $(SOURCE)
+	cd $(SOURCE) && wget https://github.com/luaposix/luaposix/archive/v$(LUAPOSIX_VER).tar.gz -O $@
 
-lua: $(SOURCE)/lua-5.2.2.tar.gz
-	tar -C $(SOURCE) -xf $(SOURCE)/lua-5.2.2.tar.gz
-	set -e; cd $(SOURCE)/lua-5.2.2; \
+# lua: easily embeddable scripting language
+#
+LUA_VER=5.2.3
+#
+$(SOURCE)/lua-$(LUA_VER).tar.gz: | $(SOURCE)
+	cd $(SOURCE) && wget http://www.lua.org/ftp/lua-$(LUA_VER).tar.gz
+
+lua: $(SOURCE)/lua-$(LUA_VER).tar.gz $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/lua-5.2.3-luaposix-31.patch
+	tar -C $(SOURCE) -xf $(SOURCE)/lua-$(LUA_VER).tar.gz
+	set -e; cd $(SOURCE)/lua-$(LUA_VER); \
+		$(PATCH)/lua-$(LUA_VER)-luaposix-$(LUAPOSIX_VER).patch; \
+		tar xf $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz; \
+		cd luaposix-$(LUAPOSIX_VER)/ext; cp posix/posix.c include/lua52compat.h ../../src/; cd ../..; \
+		sed -i 's/<config.h>/"config.h"/' src/posix.c; \
+		sed -i '/^#define/d' src/lua52compat.h; \
+		sed -i 's@^#define LUA_ROOT.*@#define LUA_ROOT "/"@' src/luaconf.h; \
+		sed -i '/^#define LUA_USE_READLINE/d' src/luaconf.h; \
+		sed -i 's/ -lreadline//' src/Makefile; \
+		sed -i 's|man/man1|.remove|' Makefile; \
 		$(MAKE) linux; \
 		$(MAKE) install INSTALL_TOP=$(DEST); \
 		rm -rf $(DEST)/man
 
-
 # libdvbsi is not commonly packaged for linux distributions...
 # so we install it to our custom lib dir
-$(SOURCE)/libdvbsi++-0.3.6.tar.bz2: | $(SOURCE)
-	cd $(SOURCE) && wget http://www.saftware.de/libdvbsi++/libdvbsi++-0.3.6.tar.bz2
+LIBDVBSI_VER=0.3.7
+#
+$(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2: | $(SOURCE)
+	cd $(SOURCE) && wget http://www.saftware.de/libdvbsi++/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 
-libdvbsi: $(SOURCE)/libdvbsi++-0.3.6.tar.bz2
-	tar -C $(SOURCE) -xf $(SOURCE)/libdvbsi++-0.3.6.tar.bz2
-	set -e; cd $(SOURCE)/libdvbsi++-0.3.6; \
+libdvbsi: $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
+	tar -C $(SOURCE) -xf $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
+	set -e; cd $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER); \
 		./configure --prefix=$(DEST); \
 		$(MAKE); \
 		make install
