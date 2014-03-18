@@ -25,7 +25,7 @@ PATCH = patch -p1 -i $(PATCHES)
 
 N_PATCHES = $(PATCHES)/neutrino-mp.pc.diff
 
-LH_PATCHES =
+LH_PATCHES = $(PATCHES)/libstb-hal.dmx.diff
 
 CFLAGS =  -funsigned-char -g -W -Wall -Wshadow -O2
 CFLAGS += -rdynamic
@@ -203,10 +203,10 @@ LUA_VER=5.2.3
 $(SOURCE)/lua-$(LUA_VER).tar.gz: | $(SOURCE)
 	cd $(SOURCE) && wget http://www.lua.org/ftp/lua-$(LUA_VER).tar.gz
 
-lua: $(SOURCE)/lua-$(LUA_VER).tar.gz $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/lua-5.2.3-luaposix-31.patch
+lua: $(SOURCE)/lua-$(LUA_VER).tar.gz $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-5.2.3-luaposix-31.patch
 	tar -C $(SOURCE) -xf $(SOURCE)/lua-$(LUA_VER).tar.gz
 	set -e; cd $(SOURCE)/lua-$(LUA_VER); \
-		$(PATCH)/lua-$(LUA_VER)-luaposix-$(LUAPOSIX_VER).patch; \
+		$(PATCH)/liblua-$(LUA_VER)-luaposix-$(LUAPOSIX_VER).patch; \
 		tar xf $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz; \
 		cd luaposix-$(LUAPOSIX_VER)/ext; cp posix/posix.c include/lua52compat.h ../../src/; cd ../..; \
 		sed -i 's/<config.h>/"config.h"/' src/posix.c; \
