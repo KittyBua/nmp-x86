@@ -22,17 +22,6 @@ diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/neutrino.cpp ne
  	} else {
  		if(g_settings.timeshiftdir != g_settings.network_nfs_recordingdir)
  			timeshiftDir = g_settings.timeshiftdir;
-@@ -2287,8 +2287,8 @@
- 	videoDecoder->Stop(1); //stopping videodecoder before 1st tune
- 	/* wait until timerd is ready... */
- 	time_t timerd_wait = time_monotonic_ms();
--	while (!timer_wakeup)
--		usleep(100);
-+	//while (!timer_wakeup)
-+	//	usleep(100);
- 	dprintf(DEBUG_NORMAL, "had to wait %ld ms for timerd start...\n", time_monotonic_ms() - timerd_wait);
- 	timer_wakeup = timer_wakup_real;
- 	InitTimerdClient();
 @@ -2311,9 +2311,9 @@
  		saveSetup(NEUTRINO_SETTINGS_FILE);
  	}
@@ -46,18 +35,3 @@ diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/neutrino.cpp ne
  fprintf(stderr, "[neutrino start] %d  -> %5ld ms\n", __LINE__, time_monotonic_ms() - starttime);
  
  	hintBox->hide(); // InitZapper also displays a hintbox
-diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/timerd/timerd.cpp neutrino-mp/src/timerd/timerd.cpp
---- neutrino-mp.org/src/timerd/timerd.cpp	2014-02-02 12:08:19.000000000 +0100
-+++ neutrino-mp/src/timerd/timerd.cpp	2014-03-03 17:07:13.545868967 +0100
-@@ -484,9 +484,9 @@
- 
- 	// Start timer thread
- 	CTimerManager::getInstance();
--	CTimerManager::getInstance()->wakeup = (bool *)data;
-+	//CTimerManager::getInstance()->wakeup = (bool *)data;
- 
--	*(bool *)data = true; /* signal we're up and running */
-+	//*(bool *)data = true; /* signal we're up and running */
- 
- 	timerd_server.run(timerd_parse_command, CTimerdMsg::ACTVERSION);
- 	printf("timerd shutdown complete\n");
