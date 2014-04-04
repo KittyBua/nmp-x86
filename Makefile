@@ -50,10 +50,10 @@ PKG_CONFIG_PATH = $(DEST)/lib/pkgconfig
 export PKG_CONFIG_PATH
 ### export our custom lib dir
 export LD_LIBRARY_PATH=$(DEST)/lib
-### in case no frontend is available
-export SIMULATE_FE=1
-export HAL_NOAVDEC=1
-export HAL_DEBUG=0xff
+### in case no frontend is available uncomment next 3 lines
+#export SIMULATE_FE=1
+#export HAL_NOAVDEC=1
+#export HAL_DEBUG=0xff
 
 CXXFLAGS = $(CFLAGS)
 
@@ -99,7 +99,7 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--enable-giflib \
 			--enable-cleanup \
 			--enable-lua \
-			--enable-ffmpeg \
+			--enable-ffmpegdec \
 			--with-datadir=$(DEST)/share/tuxbox \
 			--with-fontdir=$(DEST)/share/fonts \
 			--with-gamesdir=$(DEST)/var/tuxbox/games \
