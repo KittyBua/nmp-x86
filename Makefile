@@ -31,6 +31,7 @@ CFLAGS =  -funsigned-char -g -W -Wall -Wshadow -O2
 CFLAGS += -rdynamic
 CFLAGS += -DPEDANTIC_VALGRIND_SETUP
 CFLAGS += -DDYNAMIC_LUAPOSIX
+CFLAGS += -ggdb
 ### enable --as-needed for catching more build problems...
 CFLAGS += -Wl,--as-needed
 CFLAGS += -I/usr/include/freetype2
@@ -54,6 +55,7 @@ export LD_LIBRARY_PATH=$(DEST)/lib
 #export SIMULATE_FE=1
 #export HAL_NOAVDEC=1
 #export HAL_DEBUG=0xff
+export NO_SLOW_ADDEVENT=1
 
 CXXFLAGS = $(CFLAGS)
 
@@ -100,6 +102,8 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--enable-cleanup \
 			--enable-lua \
 			--enable-ffmpegdec \
+			--disable-upnp \
+			--disable-webif \
 			--with-datadir=$(DEST)/share/tuxbox \
 			--with-fontdir=$(DEST)/share/fonts \
 			--with-gamesdir=$(DEST)/var/tuxbox/games \
@@ -115,21 +119,21 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 		test -e version.h || touch version.h
 
 $(OBJ):
-	mkdir $(OBJ)
+	mkdir -p $(OBJ)
 $(OBJ)/neutrino-mp \
 $(OBJ)/libstb-hal: | $(OBJ)
-	mkdir $@
+	mkdir -p $@
 
 $(SOURCE):
-	mkdir $@
+	mkdir -p $@
 
 $(LH_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone -b next https://git.gitorious.org/neutrino-hd/max10s-libstb-hal.git libstb-hal
+	cd $(SOURCE) && git clone https://github.com/MaxWiesel/libstb-hal.git libstb-hal
 	rm -rf $(SOURCE)/libstb-hal.org
 	cp -ra $(SOURCE)/libstb-hal $(SOURCE)/libstb-hal.org
 
 $(N_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone -b next https://git.gitorious.org/neutrino-mp/max10s-neutrino-mp.git neutrino-mp
+	cd $(SOURCE) && git clone https://github.com/TangoCash/nmp-tangos.git neutrino-mp
 	rm -rf $(SOURCE)/neutrino-mp.org
 	cp -ra $(SOURCE)/neutrino-mp $(SOURCE)/neutrino-mp.org
 
