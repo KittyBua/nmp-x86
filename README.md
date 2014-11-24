@@ -1,4 +1,4 @@
-nmp4x86
+nmp-x86
 =======
 
-compile neutrino-mp for pc
+small build environment for nmp-tangos at x86/x64
