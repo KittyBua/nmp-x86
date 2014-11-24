@@ -25,7 +25,7 @@ PATCH = patch -p1 -i $(PATCHES)
 
 N_PATCHES = $(PATCHES)/neutrino-mp.pc.diff
 
-LH_PATCHES = $(PATCHES)/libstb-hal.dmx.diff
+LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
 
 CFLAGS =  -funsigned-char -g -W -Wall -Wshadow -O2
 CFLAGS += -rdynamic
