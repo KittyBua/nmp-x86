@@ -41,13 +41,13 @@ CFLAGS += -pthread
 CFLAGS += -I/usr/include/glib-2.0
 CFLAGS += -I/usr/lib/i386-linux-gnu/glib-2.0/include
 CFLAGS += -I/usr/include/libxml2
-CFLAGS += -I/usr/include/sigc++-1.2
 ### GST
 CFLAGS += -I/usr/include/gstreamer-0.10
 CFLAGS += -L/usr/lib/i386-linux-gnu/gstreamer-0.10
 
 ### in case some libs are installed in $(DEST) (e.g. dvbsi++ / lua / ffmpeg)
 CFLAGS += -I$(DEST)/include
+CFLAGS += -I$(DEST)/include/sigc++-2.0
 CFLAGS += -L$(DEST)/lib
 PKG_CONFIG_PATH = $(DEST)/lib/pkgconfig
 export PKG_CONFIG_PATH
@@ -64,7 +64,7 @@ CXXFLAGS = $(CFLAGS)
 export CFLAGS CXXFLAGS
 
 # first target is default...
-default: libdvbsi ffmpeg lua neutrino
+default: libdvbsi ffmpeg lua libsigc++ neutrino
 	make run
 
 run:
@@ -80,10 +80,6 @@ libstb-hal: $(LH_OBJ)/config.status
 	$(MAKE) -C $(LH_OBJ) CC="ccache gcc" CXX="ccache g++" install
 
 $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
-	for i in $(LH_PATCHES); do \
-		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
-		cd $(LH_SRC) && patch -p1 -i $$i; \
-	done;
 	$(LH_SRC)/autogen.sh
 	set -e; cd $(LH_OBJ); \
 		$(LH_SRC)/configure --enable-maintainer-mode \
@@ -91,10 +87,6 @@ $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
 # --enable-gstreamer=yes
 
 $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
-	for i in $(N_PATCHES); do \
-		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
-		cd $(N_SRC) && patch -p1 -i $$i; \
-	done;
 	$(N_SRC)/autogen.sh
 	set -e; cd $(N_OBJ); \
 		$(N_SRC)/configure --enable-maintainer-mode \
@@ -133,11 +125,21 @@ $(LH_SRC): | $(SOURCE)
 	cd $(SOURCE) && git clone https://github.com/MaxWiesel/libstb-hal.git libstb-hal
 	rm -rf $(SOURCE)/libstb-hal.org
 	cp -ra $(SOURCE)/libstb-hal $(SOURCE)/libstb-hal.org
+	for i in $(LH_PATCHES); do \
+		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
+		cd $(LH_SRC) && patch -p1 -i $$i; \
+	done;
+
 
 $(N_SRC): | $(SOURCE)
 	cd $(SOURCE) && git clone https://github.com/TangoCash/neutrino-mp-cst-next.git neutrino-mp
 	rm -rf $(SOURCE)/neutrino-mp.org
 	cp -ra $(SOURCE)/neutrino-mp $(SOURCE)/neutrino-mp.org
+	for i in $(N_PATCHES); do \
+		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
+		cd $(N_SRC) && patch -p1 -i $$i; \
+	done;
+
 
 checkout: $(SOURCE)/libstb-hal $(SOURCE)/neutrino-mp
 
@@ -238,6 +240,23 @@ libdvbsi: $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 		./configure --prefix=$(DEST); \
 		$(MAKE); \
 		make install
+#
+#
+LIBSIGC_VER=2.3.2
+#
+$(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz: | $(SOURCE)
+	cd $(SOURCE) && wget http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.3/libsigc++-$(LIBSIGC_VER).tar.xz
+
+libsigc++: $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
+	tar -C $(SOURCE) -xf $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
+	set -e; cd $(SOURCE)/libsigc++-$(LIBSIGC_VER); \
+		./configure \
+			--prefix=$(DEST) \
+			--enable-shared \
+			--disable-documentation; \
+		$(MAKE); \
+		make install
+		mv $(DEST)/lib/sigc++-2.0/include/sigc++config.h $(DEST)/include
 
 PHONY = checkout
 .PHONY: $(PHONY)

@@ -1,7 +1,7 @@
-diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/eitd/sectionsd.cpp neutrino-mp/src/eitd/sectionsd.cpp
---- neutrino-mp.org/src/eitd/sectionsd.cpp	2014-02-14 22:46:49.000000000 +0100
-+++ neutrino-mp/src/eitd/sectionsd.cpp	2014-03-03 16:47:23.801915836 +0100
-@@ -1451,7 +1451,7 @@
+diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' neutrino-mp.org/src/eitd/sectionsd.cpp neutrino-mp/src/eitd/sectionsd.cpp
+--- neutrino-mp.org/src/eitd/sectionsd.cpp	2014-11-24 23:19:40.092439603 +0100
++++ neutrino-mp/src/eitd/sectionsd.cpp	2014-11-24 23:20:03.188439394 +0100
+@@ -1443,7 +1443,7 @@
  		dvb_time = 0;
  		timediff = 0;
  
@@ -10,10 +10,10 @@ diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/eitd/sectionsd.
  			time_ntp = true;
  			success = true;
  		} else if (dvb_time_update) {
-diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/neutrino.cpp neutrino-mp/src/neutrino.cpp
---- neutrino-mp.org/src/neutrino.cpp	2014-03-03 16:39:31.909934424 +0100
-+++ neutrino-mp/src/neutrino.cpp	2014-03-03 16:47:23.825915835 +0100
-@@ -673,7 +673,7 @@
+diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' neutrino-mp.org/src/neutrino.cpp neutrino-mp/src/neutrino.cpp
+--- neutrino-mp.org/src/neutrino.cpp	2014-11-24 23:19:40.108439603 +0100
++++ neutrino-mp/src/neutrino.cpp	2014-11-24 23:21:00.332438876 +0100
+@@ -665,7 +665,7 @@
  	std::string timeshiftDir;
  	if(g_settings.timeshiftdir.empty()) {
  		timeshiftDir = g_settings.network_nfs_recordingdir + "/.timeshift";
@@ -22,7 +22,7 @@ diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/neutrino.cpp ne
  	} else {
  		if(g_settings.timeshiftdir != g_settings.network_nfs_recordingdir)
  			timeshiftDir = g_settings.timeshiftdir;
-@@ -2311,9 +2311,9 @@
+@@ -2310,9 +2310,9 @@
  		saveSetup(NEUTRINO_SETTINGS_FILE);
  	}
  
@@ -32,6 +32,6 @@ diff -Ebur '--exclude=.svn' '--exclude=.git' neutrino-mp.org/src/neutrino.cpp ne
 +	//CHDDDestExec * hdd = new CHDDDestExec();
 +	//hdd->exec(NULL, "");
 +	//delete hdd;
- fprintf(stderr, "[neutrino start] %d  -> %5ld ms\n", __LINE__, time_monotonic_ms() - starttime);
  
- 	hintBox->hide(); // InitZapper also displays a hintbox
+ 	bootstatus->hide();
+ 	delete bootstatus;
