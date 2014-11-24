@@ -32,6 +32,7 @@ CFLAGS += -rdynamic
 CFLAGS += -DPEDANTIC_VALGRIND_SETUP
 CFLAGS += -DDYNAMIC_LUAPOSIX
 CFLAGS += -ggdb
+CFLAGS += -D__user=
 ### enable --as-needed for catching more build problems...
 CFLAGS += -Wl,--as-needed
 CFLAGS += -I/usr/include/freetype2
@@ -40,6 +41,7 @@ CFLAGS += -pthread
 CFLAGS += -I/usr/include/glib-2.0
 CFLAGS += -I/usr/lib/i386-linux-gnu/glib-2.0/include
 CFLAGS += -I/usr/include/libxml2
+CFLAGS += -I/usr/include/sigc++-1.2
 ### GST
 CFLAGS += -I/usr/include/gstreamer-0.10
 CFLAGS += -L/usr/lib/i386-linux-gnu/gstreamer-0.10
@@ -133,7 +135,7 @@ $(LH_SRC): | $(SOURCE)
 	cp -ra $(SOURCE)/libstb-hal $(SOURCE)/libstb-hal.org
 
 $(N_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone https://github.com/TangoCash/nmp-tangos.git neutrino-mp
+	cd $(SOURCE) && git clone https://github.com/TangoCash/neutrino-mp-cst-next.git neutrino-mp
 	rm -rf $(SOURCE)/neutrino-mp.org
 	cp -ra $(SOURCE)/neutrino-mp $(SOURCE)/neutrino-mp.org
 
