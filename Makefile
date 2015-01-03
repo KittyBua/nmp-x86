@@ -35,15 +35,13 @@ CFLAGS += -ggdb
 CFLAGS += -D__user=
 ### enable --as-needed for catching more build problems...
 CFLAGS += -Wl,--as-needed
-CFLAGS += -I/usr/include/freetype2
+CFLAGS += $(shell pkg-config --cflags --libs freetype2)
 ###
 CFLAGS += -pthread
-CFLAGS += -I/usr/include/glib-2.0
-CFLAGS += -I/usr/lib/i386-linux-gnu/glib-2.0/include
-CFLAGS += -I/usr/include/libxml2
+CFLAGS += $(shell pkg-config --cflags --libs glib-2.0)
+CFLAGS += $(shell pkg-config --cflags --libs libxml-2.0)
 ### GST
-CFLAGS += -I/usr/include/gstreamer-0.10
-CFLAGS += -L/usr/lib/i386-linux-gnu/gstreamer-0.10
+CFLAGS += $(shell pkg-config --cflags --libs gstreamer-0.10)
 
 ### in case some libs are installed in $(DEST) (e.g. dvbsi++ / lua / ffmpeg)
 CFLAGS += -I$(DEST)/include
@@ -83,8 +81,8 @@ $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
 	$(LH_SRC)/autogen.sh
 	set -e; cd $(LH_OBJ); \
 		$(LH_SRC)/configure --enable-maintainer-mode \
-			--prefix=$(DEST) --enable-shared=no
-# --enable-gstreamer=yes
+			--prefix=$(DEST) --enable-shared=no \
+			--enable-gstreamer=yes
 
 $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 	$(N_SRC)/autogen.sh
