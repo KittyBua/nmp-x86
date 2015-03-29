@@ -61,8 +61,10 @@ CXXFLAGS = $(CFLAGS)
 
 export CFLAGS CXXFLAGS
 
+include make/source.mk
+
 # first target is default...
-default: libdvbsi ffmpeg lua libsigc++ neutrino
+default: libdvbsipp ffmpeg lua libsigcpp neutrino
 	make run
 
 run:
@@ -116,39 +118,10 @@ $(OBJ)/neutrino-mp \
 $(OBJ)/libstb-hal: | $(OBJ)
 	mkdir -p $@
 
-$(SOURCE):
-	mkdir -p $@
-
-$(LH_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone https://github.com/MaxWiesel/libstb-hal.git libstb-hal
-	rm -rf $(SOURCE)/libstb-hal.org
-	cp -ra $(SOURCE)/libstb-hal $(SOURCE)/libstb-hal.org
-	for i in $(LH_PATCHES); do \
-		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
-		cd $(LH_SRC) && patch -p1 -i $$i; \
-	done;
-
-
-$(N_SRC): | $(SOURCE)
-	cd $(SOURCE) && git clone https://github.com/TangoCash/neutrino-mp-cst-next.git neutrino-mp
-	rm -rf $(SOURCE)/neutrino-mp.org
-	cp -ra $(SOURCE)/neutrino-mp $(SOURCE)/neutrino-mp.org
-	for i in $(N_PATCHES); do \
-		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
-		cd $(N_SRC) && patch -p1 -i $$i; \
-	done;
-
-
-checkout: $(SOURCE)/libstb-hal $(SOURCE)/neutrino-mp
-
 clean:
 	-$(MAKE) -C $(N_OBJ) clean
 	-$(MAKE) -C $(LH_OBJ) clean
 	rm -rf $(N_OBJ) $(LH_OBJ)
-
-update: 
-	cd $(LH_SRC) && git pull
-	cd $(N_SRC) && git pull
 
 diff:
 	mkdir -p $(PWD)/own_patch
@@ -182,32 +155,12 @@ FFMPEG_CONFIGURE += --enable-parser=mjpeg
 FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-debug
 FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-stripping
 
-#
-FFMPEG_VER=2.1.4
-#
-$(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2: | $(SOURCE)
-	cd $(SOURCE) && wget http://www.ffmpeg.org/releases/ffmpeg-$(FFMPEG_VER).tar.bz2
-
 ffmpeg: $(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2
 	tar -C $(SOURCE) -xf $(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2
 	set -e; cd $(SOURCE)/ffmpeg-$(FFMPEG_VER); \
 		./configure --prefix=$(DEST) $(FFMPEG_CONFIGURE) ; \
 		$(MAKE); \
 		make install
-
-# luaposix: posix bindings for lua
-#
-LUAPOSIX_VER=31
-#
-$(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz: | $(SOURCE)
-	cd $(SOURCE) && wget https://github.com/luaposix/luaposix/archive/v$(LUAPOSIX_VER).tar.gz -O $@
-
-# lua: easily embeddable scripting language
-#
-LUA_VER=5.2.3
-#
-$(SOURCE)/lua-$(LUA_VER).tar.gz: | $(SOURCE)
-	cd $(SOURCE) && wget http://www.lua.org/ftp/lua-$(LUA_VER).tar.gz
 
 lua: $(SOURCE)/lua-$(LUA_VER).tar.gz $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-5.2.3-luaposix-31.patch
 	tar -C $(SOURCE) -xf $(SOURCE)/lua-$(LUA_VER).tar.gz
@@ -225,27 +178,14 @@ lua: $(SOURCE)/lua-$(LUA_VER).tar.gz $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz 
 		$(MAKE) install INSTALL_TOP=$(DEST); \
 		rm -rf $(DEST)/man
 
-# libdvbsi is not commonly packaged for linux distributions...
-# so we install it to our custom lib dir
-LIBDVBSI_VER=0.3.7
-#
-$(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2: | $(SOURCE)
-	cd $(SOURCE) && wget http://www.saftware.de/libdvbsi++/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
-
-libdvbsi: $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
+libdvbsipp: $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	tar -C $(SOURCE) -xf $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	set -e; cd $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER); \
 		./configure --prefix=$(DEST); \
 		$(MAKE); \
 		make install
-#
-#
-LIBSIGC_VER=2.3.2
-#
-$(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz: | $(SOURCE)
-	cd $(SOURCE) && wget http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.3/libsigc++-$(LIBSIGC_VER).tar.xz
 
-libsigc++: $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
+libsigcpp: $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
 	tar -C $(SOURCE) -xf $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
 	set -e; cd $(SOURCE)/libsigc++-$(LIBSIGC_VER); \
 		./configure \
