@@ -3,114 +3,93 @@
 # (C) 2012,2013 Stefan Seyfried
 #
 # taken from seife's build system, modified from
-# (C) 2014 TangoCash
+# (C) 2014 TangoCash, 2015 Max,TangoCash
 #
 # prerequisite packages need to be installed,
 # no checking is done for that
 ####################################################
 
-SOURCE = $(PWD)/source
-OBJ = $(PWD)/obj
+ARCHIVE    = $(HOME)/Archive
+BASE_DIR   = $(PWD)
+BUILD_TMP  = $(BASE_DIR)/build_tmp
+OBJ        = $(BASE_DIR)/obj
 
-BOXTYPE = generic
-DEST = $(PWD)/$(BOXTYPE)
+BOXTYPE    = generic
+DEST       = $(BASE_DIR)/$(BOXTYPE)
+D          = $(BASE_DIR)/deps
 
-LH_SRC = $(SOURCE)/libstb-hal
-LH_OBJ = $(OBJ)/libstb-hal
-N_SRC  = $(SOURCE)/neutrino-mp
-N_OBJ  = $(OBJ)/neutrino-mp
+LH_SRC     = $(BUILD_TMP)/libstb-hal
+LH_OBJ     = $(OBJ)/libstb-hal
+N_SRC      = $(BUILD_TMP)/neutrino-mp
+N_OBJ      = $(OBJ)/neutrino-mp
 
-PATCHES = $(PWD)/patches
-PATCH = patch -p1 -i $(PATCHES)
+PATCHES    = $(BASE_DIR)/patches
+PATCH      = patch -p1 -i $(PATCHES)
 
-N_PATCHES = $(PATCHES)/neutrino-mp.pc.diff
+N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
 
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
 
-CFLAGS =  -funsigned-char -g -W -Wall -Wshadow -O2
-CFLAGS += -rdynamic
-CFLAGS += -DPEDANTIC_VALGRIND_SETUP
-CFLAGS += -DDYNAMIC_LUAPOSIX
-CFLAGS += -ggdb
-CFLAGS += -D__user=
+CFLAGS     = -funsigned-char -g -W -Wall -Wshadow -O2
+CFLAGS    += -rdynamic
+CFLAGS    += -DPEDANTIC_VALGRIND_SETUP
+CFLAGS    += -DDYNAMIC_LUAPOSIX
+CFLAGS    += -ggdb
+CFLAGS    += -D__user=
 ### enable --as-needed for catching more build problems...
-CFLAGS += -Wl,--as-needed
-CFLAGS += $(shell pkg-config --cflags --libs freetype2)
+CFLAGS    += -Wl,--as-needed
+CFLAGS    += $(shell pkg-config --cflags --libs freetype2)
 ###
-CFLAGS += -pthread
-CFLAGS += $(shell pkg-config --cflags --libs glib-2.0)
-CFLAGS += $(shell pkg-config --cflags --libs libxml-2.0)
+CFLAGS    += -pthread
+CFLAGS    += $(shell pkg-config --cflags --libs glib-2.0)
+CFLAGS    += $(shell pkg-config --cflags --libs libxml-2.0)
 ### GST
-CFLAGS += $(shell pkg-config --cflags --libs gstreamer-0.10)
+CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-0.10)
 
 ### in case some libs are installed in $(DEST) (e.g. dvbsi++ / lua / ffmpeg)
-CFLAGS += -I$(DEST)/include
-CFLAGS += -I$(DEST)/include/sigc++-2.0
-CFLAGS += -L$(DEST)/lib
+CFLAGS    += -I$(DEST)/include
+CFLAGS    += -I$(DEST)/include/sigc++-2.0
+CFLAGS    += -L$(DEST)/lib
 PKG_CONFIG_PATH = $(DEST)/lib/pkgconfig
 export PKG_CONFIG_PATH
+
+CXXFLAGS = $(CFLAGS)
+export CFLAGS CXXFLAGS
+
 ### export our custom lib dir
 export LD_LIBRARY_PATH=$(DEST)/lib
+
 ### in case no frontend is available uncomment next 3 lines
 #export SIMULATE_FE=1
 #export HAL_NOAVDEC=1
 #export HAL_DEBUG=0xff
 export NO_SLOW_ADDEVENT=1
 
-CXXFLAGS = $(CFLAGS)
+# wget tarballs into archive directory
+WGET = wget --no-check-certificate -t6 -T20 -c -P $(ARCHIVE)
 
-export CFLAGS CXXFLAGS
+# unpack tarballs
+UNTAR = tar -C $(BUILD_TMP) -xf $(ARCHIVE)
 
-include make/source.mk
+BOOTSTRAP = $(ARCHIVE) $(BUILD_TMP) $(D)
+
+$(ARCHIVE):
+	mkdir -p $(ARCHIVE)
+
+$(BUILD_TMP):
+	mkdir -p $(BUILD_TMP)
+
+$(D):
+	mkdir -p $(D)
+
+bootstrap: $(BOOTSTRAP)
 
 # first target is default...
-default: libdvbsipp ffmpeg lua libsigcpp neutrino
+default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(D)/libsigcpp neutrino
 	make run
 
 run:
 	gdb -ex run $(DEST)/bin/neutrino
-
-neutrino: $(N_OBJ)/config.status
-	-rm $(N_OBJ)/src/neutrino # force relinking on changed libstb-hal
-	$(MAKE) -C $(N_OBJ) CC="ccache gcc" CXX="ccache g++" install
-	find $(DEST)/../own_build/ -mindepth 1 -maxdepth 1 -exec cp -at$(DEST)/ -- {} +
-
-$(LH_OBJ)/libstb-hal.a: libstb-hal
-libstb-hal: $(LH_OBJ)/config.status
-	$(MAKE) -C $(LH_OBJ) CC="ccache gcc" CXX="ccache g++" install
-
-$(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
-	$(LH_SRC)/autogen.sh
-	set -e; cd $(LH_OBJ); \
-		$(LH_SRC)/configure --enable-maintainer-mode \
-			--prefix=$(DEST) --enable-shared=no \
-			--enable-gstreamer=yes
-
-$(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
-	$(N_SRC)/autogen.sh
-	set -e; cd $(N_OBJ); \
-		$(N_SRC)/configure --enable-maintainer-mode \
-			--prefix=$(DEST) \
-			--enable-silent-rules --enable-mdev \
-			--enable-giflib \
-			--enable-cleanup \
-			--enable-lua \
-			--enable-ffmpegdec \
-			--disable-upnp \
-			--disable-webif \
-			--with-datadir=$(DEST)/share/tuxbox \
-			--with-fontdir=$(DEST)/share/fonts \
-			--with-gamesdir=$(DEST)/var/tuxbox/games \
-			--with-plugindir=$(DEST)/var/tuxbox/plugins \
-			--with-configdir=$(DEST)/var/tuxbox/config \
-			--with-isocodesdir=$(DEST)/share/iso-codes \
-			--with-target=native --with-boxtype=$(BOXTYPE) \
-			--with-stb-hal-includes=$(LH_SRC)/include \
-			--with-stb-hal-build=$(DEST)/lib \
-			; \
-		test -e svn_version.h || echo '#define BUILT_DATE "error - not set"' > svn_version.h; \
-		test -e git_version.h || echo '#define BUILT_DATE "error - not set"' > git_version.h; \
-		test -e version.h || touch version.h
 
 $(OBJ):
 	mkdir -p $(OBJ)
@@ -123,79 +102,32 @@ clean:
 	-$(MAKE) -C $(LH_OBJ) clean
 	rm -rf $(N_OBJ) $(LH_OBJ)
 
+distclean:
+	rm -rf $(BUILD_TMP)
+	rm -rf $(D)
+	rm -rf $(DEST)
+	rm -rf $(OBJ)
+
+update:
+	rm -rf $(LH_SRC)
+	rm -rf $(LH_SRC).org
+	rm -rf $(N_SRC)
+	rm -rf $(N_SRC).org
+	rm -rf $(OBJ)
+	make default
+
 diff:
 	mkdir -p $(PWD)/own_patch
-	cd $(SOURCE) && \
-	diff -NEbur --exclude-from=$(PWD)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.diff ; [ $$? -eq 1 ]
-	cd $(SOURCE) && \
-	diff -NEbur --exclude-from=$(PWD)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.diff ; [ $$? -eq 1 ]
+	cd $(BUILD_TMP) && \
+	diff -NEbur --exclude-from=$(PWD)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
+	cd $(BUILD_TMP) && \
+	diff -NEbur --exclude-from=$(PWD)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
 
+include make/archives.mk
+include make/system-libs.mk
+include make/neutrino.mk
+include Makefile.local
 
-# ffmpeg parameters taken from max-git - used to build ffmpeg to our custom lib dir
-FFMPEG_CONFIGURE  = --disable-static --enable-shared --enable-small --disable-runtime-cpudetect
-FFMPEG_CONFIGURE += --disable-ffserver --disable-ffplay --disable-ffprobe
-FFMPEG_CONFIGURE += --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages
-FFMPEG_CONFIGURE += --disable-asm --disable-altivec --disable-amd3dnow --disable-amd3dnowext --disable-mmx --disable-mmxext
-FFMPEG_CONFIGURE += --disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse4 --disable-sse42 --disable-avx --disable-fma4
-FFMPEG_CONFIGURE += --disable-armv5te --disable-armv6 --disable-armv6t2 --disable-vfp --disable-neon --disable-vis --disable-inline-asm
-FFMPEG_CONFIGURE += --disable-yasm --disable-mips32r2 --disable-mipsdspr1 --disable-mipsdspr2 --disable-mipsfpu --disable-fast-unaligned
-FFMPEG_CONFIGURE += --disable-muxers
-FFMPEG_CONFIGURE += --enable-muxer=flac --enable-muxer=mp3 --enable-muxer=h261 --enable-muxer=h263 --enable-muxer=h264
-FFMPEG_CONFIGURE += --enable-muxer=image2 --enable-muxer=mpeg1video --enable-muxer=mpeg2video --enable-muxer=ogg
-FFMPEG_CONFIGURE += --disable-encoders
-FFMPEG_CONFIGURE += --enable-encoder=aac --enable-encoder=h261 --enable-encoder=h263 --enable-encoder=h263p --enable-encoder=ljpeg
-FFMPEG_CONFIGURE += --enable-encoder=mjpeg --enable-encoder=mpeg1video --enable-encoder=mpeg2video --enable-encoder=png
-FFMPEG_CONFIGURE += --disable-decoders
-FFMPEG_CONFIGURE += --enable-decoder=aac --enable-decoder=dvbsub --enable-decoder=flac --enable-decoder=h261 --enable-decoder=h263
-FFMPEG_CONFIGURE += --enable-decoder=h263i --enable-decoder=h264 --enable-decoder=iff_byterun1 --enable-decoder=mjpeg
-FFMPEG_CONFIGURE += --enable-decoder=mp3 --enable-decoder=mpeg1video --enable-decoder=mpeg2video --enable-decoder=png
-FFMPEG_CONFIGURE += --enable-decoder=theora --enable-decoder=vorbis --enable-decoder=wmv3 --enable-decoder=pcm_s16le
-FFMPEG_CONFIGURE += --enable-demuxer=mjpeg --enable-demuxer=wav --enable-demuxer=rtsp
-FFMPEG_CONFIGURE += --enable-parser=mjpeg
-FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-debug
-FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-stripping
-
-ffmpeg: $(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2
-	tar -C $(SOURCE) -xf $(SOURCE)/ffmpeg-$(FFMPEG_VER).tar.bz2
-	set -e; cd $(SOURCE)/ffmpeg-$(FFMPEG_VER); \
-		./configure --prefix=$(DEST) $(FFMPEG_CONFIGURE) ; \
-		$(MAKE); \
-		make install
-
-lua: $(SOURCE)/lua-$(LUA_VER).tar.gz $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-5.2.3-luaposix-31.patch
-	tar -C $(SOURCE) -xf $(SOURCE)/lua-$(LUA_VER).tar.gz
-	set -e; cd $(SOURCE)/lua-$(LUA_VER); \
-		$(PATCH)/liblua-$(LUA_VER)-luaposix-$(LUAPOSIX_VER).patch; \
-		tar xf $(SOURCE)/luaposix-v$(LUAPOSIX_VER).tar.gz; \
-		cd luaposix-$(LUAPOSIX_VER)/ext; cp posix/posix.c include/lua52compat.h ../../src/; cd ../..; \
-		sed -i 's/<config.h>/"config.h"/' src/posix.c; \
-		sed -i '/^#define/d' src/lua52compat.h; \
-		sed -i 's@^#define LUA_ROOT.*@#define LUA_ROOT "/"@' src/luaconf.h; \
-		sed -i '/^#define LUA_USE_READLINE/d' src/luaconf.h; \
-		sed -i 's/ -lreadline//' src/Makefile; \
-		sed -i 's|man/man1|.remove|' Makefile; \
-		$(MAKE) linux; \
-		$(MAKE) install INSTALL_TOP=$(DEST); \
-		rm -rf $(DEST)/man
-
-libdvbsipp: $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
-	tar -C $(SOURCE) -xf $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
-	set -e; cd $(SOURCE)/libdvbsi++-$(LIBDVBSI_VER); \
-		./configure --prefix=$(DEST); \
-		$(MAKE); \
-		make install
-
-libsigcpp: $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
-	tar -C $(SOURCE) -xf $(SOURCE)/libsigc++-$(LIBSIGC_VER).tar.xz
-	set -e; cd $(SOURCE)/libsigc++-$(LIBSIGC_VER); \
-		./configure \
-			--prefix=$(DEST) \
-			--enable-shared \
-			--disable-documentation; \
-		$(MAKE); \
-		make install
-		mv $(DEST)/lib/sigc++-2.0/include/sigc++config.h $(DEST)/include
-
-PHONY = checkout
+PHONY = update
 .PHONY: $(PHONY)
 
