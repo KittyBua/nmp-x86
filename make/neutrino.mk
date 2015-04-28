@@ -1,4 +1,4 @@
-neutrino: $(N_OBJ)/config.status
+neutrino: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(D)/libsigcpp $(N_OBJ)/config.status
 	-rm $(N_OBJ)/src/neutrino # force relinking on changed libstb-hal
 	$(MAKE) -C $(N_OBJ) CC="ccache gcc" CXX="ccache g++" install
 	find $(DEST)/../own_build/ -mindepth 1 -maxdepth 1 -exec cp -at$(DEST)/ -- {} +

@@ -73,6 +73,10 @@ UNTAR = tar -C $(BUILD_TMP) -xf $(ARCHIVE)
 
 BOOTSTRAP = $(ARCHIVE) $(BUILD_TMP) $(D)
 
+# first target is default...
+default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(D)/libsigcpp neutrino
+	make run
+
 $(ARCHIVE):
 	mkdir -p $(ARCHIVE)
 
@@ -83,10 +87,6 @@ $(D):
 	mkdir -p $(D)
 
 bootstrap: $(BOOTSTRAP)
-
-# first target is default...
-default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(D)/libsigcpp neutrino
-	make run
 
 run:
 	gdb -ex run $(DEST)/bin/neutrino
