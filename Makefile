@@ -36,6 +36,7 @@ CFLAGS    += -DPEDANTIC_VALGRIND_SETUP
 CFLAGS    += -DDYNAMIC_LUAPOSIX
 CFLAGS    += -ggdb
 CFLAGS    += -D__user=
+CFLAGS    += -D__STDC_CONSTANT_MACROS
 ### enable --as-needed for catching more build problems...
 CFLAGS    += -Wl,--as-needed
 CFLAGS    += $(shell pkg-config --cflags --libs freetype2)

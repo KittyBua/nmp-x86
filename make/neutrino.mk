@@ -25,12 +25,16 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--enable-lua \
 			--enable-ffmpegdec \
 			--disable-upnp \
-			--disable-webif \
+			--with-vardir=$(DEST)/var \
 			--with-datadir=$(DEST)/share/tuxbox \
 			--with-fontdir=$(DEST)/share/fonts \
 			--with-gamesdir=$(DEST)/var/tuxbox/games \
 			--with-plugindir=$(DEST)/var/tuxbox/plugins \
 			--with-configdir=$(DEST)/var/tuxbox/config \
+			--with-iconsdir=$(DEST)/share/tuxbox/neutrino/icons \
+			--with-localedir=$(DEST)/share/tuxbox/neutrino/locale \
+			--with-private_httpddir=$(DEST)/share/tuxbox/neutrino/httpd \
+			--with-themesdir=$(DEST)/share/tuxbox/neutrino/themes \
 			--with-isocodesdir=$(DEST)/share/iso-codes \
 			--with-target=native --with-boxtype=$(BOXTYPE) \
 			--with-stb-hal-includes=$(LH_SRC)/include \
