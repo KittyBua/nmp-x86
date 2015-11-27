@@ -27,6 +27,8 @@ PATCHES    = $(BASE_DIR)/patches
 PATCH      = patch -p1 -i $(PATCHES)
 
 N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
+### uncomment if gcc > 5
+#N_PATCHES  += $(PATCHES)/fix_DVB_API_VERSION check_for_gcc5.patch
 
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
 
