@@ -35,3 +35,14 @@ diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' neutrino-mp.org/s
  
  	bootstatus->hide();
  	delete bootstatus;
+--- neutrino-mp.org/src/gui/luainstance.cpp
++++ neutrino-mp/src/gui/luainstance.cpp
+@@ -3094,7 +3094,7 @@
+ 		return 2;
+ 	}
+ 
+-	lua_Integer dx = 0, dy = 0, style = CNeutrinoFonts::FONT_STYLE_REGULAR;
++	int dx = 0, dy = 0, style = CNeutrinoFonts::FONT_STYLE_REGULAR;
+ 	std::string text="";
+ 
+ 	dx = luaL_checkint(L, 2);
