@@ -4,6 +4,7 @@
 #
 # taken from seife's build system, modified from
 # (C) 2014 TangoCash, 2015 Max,TangoCash
+# (C) 2016 TangoCash
 #
 # prerequisite packages need to be installed,
 # no checking is done for that
@@ -26,9 +27,15 @@ N_OBJ      = $(OBJ)/neutrino-mp
 PATCHES    = $(BASE_DIR)/patches
 PATCH      = patch -p1 -i $(PATCHES)
 
+#supported flavours: classic,franken,tangos (default)
+FLAVOUR	  ?= tangos
+
 N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
-### uncomment if gcc > 5
-#N_PATCHES  += $(PATCHES)/fix_DVB_API_VERSION_check_for_gcc5.patch
+### gcc > 5 needs extra patch
+GCCVERSION_GT5 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 5)
+ifeq ($(GCCVERSION_GT5), 1)
+    N_PATCHES  += $(PATCHES)/fix_DVB_API_VERSION_check_for_gcc5.patch
+endif
 
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
 

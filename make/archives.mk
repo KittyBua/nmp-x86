@@ -7,11 +7,32 @@ LIBSIGC_VER_MAJ=2.3
 LIBSIGC_VER_MIN=2
 LIBSIGC_VER=$(LIBSIGC_VER_MAJ).$(LIBSIGC_VER_MIN)
 
-GITCLONE=git clone git://github.com
-GITNAMENMP=TangoCash
+ifeq ($(FLAVOUR), classic)
+GITNAMENMP=Duckbox-Developers
 GITREPONMP=neutrino-mp-cst-next
+GITBRANCHNMP=master
 GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
+N_PATCHES += $(MP_PATCHES)
+else
+ifeq ($(FLAVOUR), franken)
+GITNAMENMP=fs-basis
+GITREPONMP=neutrino-mp-cst-next
+GITBRANCHNMP=test
+GITNAMESTBHAL=Duckbox-Developers
+GITREPOSTBHAL=libstb-hal-cst-next
+N_PATCHES += $(FS_PATCHES)
+else
+GITNAMENMP=TangoCash
+GITREPONMP=neutrino-mp-cst-next
+GITBRANCHNMP=master
+GITNAMESTBHAL=Duckbox-Developers
+GITREPOSTBHAL=libstb-hal-cst-next
+N_PATCHES += $(TG_PATCHES)
+endif
+endif
+
+GITCLONE=git clone -b $(GITBRANCHNMP) git://github.com
 
 # ffmpeg
 $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2:
@@ -48,13 +69,14 @@ $(LH_SRC):
 
 # neutrino mp
 $(N_SRC):
-	[ -d "$(ARCHIVE)/$(GITREPONMP).git" ] && \
-	(cd $(ARCHIVE)/$(GITREPONMP).git; git pull; cd "$(BASE_DIR)";); \
-	[ -d "$(ARCHIVE)/$(GITREPONMP).git" ] || \
-	$(GITCLONE)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITREPONMP).git; \
-	cp -ra $(ARCHIVE)/$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
-	cp -ra $(BUILD_TMP)/neutrino-mp $(BUILD_TMP)/neutrino-mp.org
+	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] && \
+	(cd $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; git pull; cd "$(BASE_DIR)";); \
+	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] || \
+	$(GITCLONE)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
+	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
 	for i in $(N_PATCHES); do \
 		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
 		cd $(N_SRC) && patch -p1 -i $$i; \
-	done;
+	done; \
+	cp -ra $(BUILD_TMP)/neutrino-mp $(BUILD_TMP)/neutrino-mp.org
+
