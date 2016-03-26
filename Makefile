@@ -126,6 +126,12 @@ update:
 	rm -rf $(OBJ)
 	make default
 
+copy:
+	rm -rf $(LH_SRC).org
+	cp -r $(LH_SRC) $(LH_SRC).org
+	rm -rf $(N_SRC).org
+	cp -r $(N_SRC) $(N_SRC).org
+
 diff:
 	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \

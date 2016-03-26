@@ -56,11 +56,11 @@ $(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz:
 
 # stb-hal
 $(LH_SRC):
-	[ -d "$(archivedir)/$(GITREPOSTBHAL).git" ] && \
-	(cd $(ARCHIVE)/$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_TMP)";); \
-	[ -d "$(ARCHIVE)/$(GITREPOSTBHAL).git" ] || \
-	$(GITCLONE)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITREPOSTBHAL).git; \
-	cp -ra $(ARCHIVE)/$(GITREPOSTBHAL).git $(BUILD_TMP)/libstb-hal;\
+	[ -d "$(archivedir)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
+	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_TMP)";); \
+	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] || \
+	$(GITCLONE)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
+	cp -ra $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git $(BUILD_TMP)/libstb-hal;\
 	cp -ra $(BUILD_TMP)/libstb-hal $(BUILD_TMP)/libstb-hal.org
 	for i in $(LH_PATCHES); do \
 		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
