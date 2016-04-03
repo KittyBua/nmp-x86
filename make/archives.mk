@@ -56,7 +56,7 @@ $(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz:
 
 # stb-hal
 $(LH_SRC):
-	[ -d "$(archivedir)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
+	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
 	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_TMP)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] || \
 	$(GITCLONE)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
