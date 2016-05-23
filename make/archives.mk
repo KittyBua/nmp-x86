@@ -15,6 +15,14 @@ GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(MP_PATCHES)
 else
+ifeq ($(FLAVOUR), ni)
+GITNAMENMP=Duckbox-Developers
+GITREPONMP=neutrino-mp-cst-next
+GITBRANCHNMP=ni
+GITNAMESTBHAL=Duckbox-Developers
+GITREPOSTBHAL=libstb-hal-cst-next
+N_PATCHES += $(MP_PATCHES)
+else
 ifeq ($(FLAVOUR), franken)
 GITNAMENMP=fs-basis
 GITREPONMP=neutrino-mp-cst-next
@@ -29,6 +37,7 @@ GITBRANCHNMP=master
 GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(TG_PATCHES)
+endif
 endif
 endif
 
@@ -74,6 +83,7 @@ $(N_SRC):
 	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] || \
 	$(GITCLONE)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
 	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
+	(cd $(BUILD_TMP)/neutrino-mp; git checkout $(GITBRANCHNMP);); \
 	for i in $(N_PATCHES); do \
 		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
 		cd $(N_SRC) && patch -p1 -i $$i; \
