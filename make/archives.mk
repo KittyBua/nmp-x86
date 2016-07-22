@@ -1,5 +1,5 @@
 # 
-FFMPEG_VER=2.5
+FFMPEG_VER=2.8.6
 LUA_VER=5.2.3
 LUAPOSIX_VER=31
 LIBDVBSI_VER=0.3.7
@@ -31,12 +31,21 @@ GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(FS_PATCHES)
 else
+ifeq ($(FLAVOUR), skinned)
+GITNAMENMP=TangoCash
+GITREPONMP=neutrino-mp-cst-next
+GITBRANCHNMP=skinned
+GITNAMESTBHAL=Duckbox-Developers
+GITREPOSTBHAL=libstb-hal-cst-next
+N_PATCHES += $(TG_PATCHES)
+else
 GITNAMENMP=TangoCash
 GITREPONMP=neutrino-mp-cst-next
 GITBRANCHNMP=master
 GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(TG_PATCHES)
+endif
 endif
 endif
 endif

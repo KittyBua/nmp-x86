@@ -23,6 +23,7 @@ FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-
 FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-stripping
 
 $(D)/ffmpeg: $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2
+	rm -rf cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
 	$(UNTAR)/ffmpeg-$(FFMPEG_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
 		./configure --prefix=$(DEST) $(FFMPEG_CONFIGURE) ; \
@@ -31,6 +32,7 @@ $(D)/ffmpeg: $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2
 	touch $@
 
 $(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-5.2.3-luaposix-31.patch
+	rm -rf $(BUILD_TMP)/lua-$(LUA_VER); \
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER); \
 		$(PATCH)/liblua-$(LUA_VER)-luaposix-$(LUAPOSIX_VER).patch; \
@@ -48,6 +50,7 @@ $(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).
 	touch $@
 
 $(D)/libdvbsipp: $(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
+	rm -rf $(BUILD_TMP)/libdvbsi++-$(LIBDVBSI_VER); \
 	$(UNTAR)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/libdvbsi++-$(LIBDVBSI_VER); \
 		./configure --prefix=$(DEST); \
@@ -56,6 +59,7 @@ $(D)/libdvbsipp: $(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	touch $@
 
 $(D)/libsigcpp: $(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz
+	rm -rf $(BUILD_TMP)/libsigc++-$(LIBSIGC_VER); \
 	$(UNTAR)/libsigc++-$(LIBSIGC_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/libsigc++-$(LIBSIGC_VER); \
 		./configure \
