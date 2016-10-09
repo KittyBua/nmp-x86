@@ -21,6 +21,8 @@ FFMPEG_CONFIGURE += --enable-demuxer=mjpeg --enable-demuxer=wav --enable-demuxer
 FFMPEG_CONFIGURE += --enable-parser=mjpeg
 FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-debug
 FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-stripping
+# extra parameters for PC playback
+FFMPEG_CONFIGURE += --enable-decoder=mp2 --enable-decoder=ac3 --enable-decoder=hevc
 
 $(D)/ffmpeg: $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2
 	rm -rf cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
