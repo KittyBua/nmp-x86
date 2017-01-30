@@ -74,28 +74,26 @@ $(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz:
 
 # stb-hal
 $(LH_SRC):
+	$(START_BUILD)
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
 	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_TMP)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] || \
 	$(GITCLONE)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
 	cp -ra $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git $(BUILD_TMP)/libstb-hal;\
 	cp -ra $(BUILD_TMP)/libstb-hal $(BUILD_TMP)/libstb-hal.org
-	for i in $(LH_PATCHES); do \
-		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
-		cd $(LH_SRC) && patch -p1 -i $$i; \
-	done;
+	$(call post_patch,$(LH_SRC),$(LH_PATCHES))
+	$(FINISH_BUILD)
 
 # neutrino mp
 $(N_SRC):
+	$(START_BUILD)
 	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] && \
 	(cd $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; git pull; cd "$(BASE_DIR)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] || \
 	$(GITCLONE)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
 	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
 	(cd $(BUILD_TMP)/neutrino-mp; git checkout $(GITBRANCHNMP);); \
-	for i in $(N_PATCHES); do \
-		echo "==> Applying Patch: $(subst $(PATCHES)/,'',$$i)"; \
-		cd $(N_SRC) && patch -p1 -i $$i; \
-	done; \
+	$(call post_patch,$(N_SRC),$(N_PATCHES)) \
 	cp -ra $(BUILD_TMP)/neutrino-mp $(BUILD_TMP)/neutrino-mp.org
+	$(FINISH_BUILD)
 

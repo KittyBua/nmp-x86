@@ -25,7 +25,6 @@ N_SRC      = $(BUILD_TMP)/neutrino-mp
 N_OBJ      = $(OBJ)/neutrino-mp
 
 PATCHES    = $(BASE_DIR)/patches
-PATCH      = patch -p1 -i $(PATCHES)
 
 #supported flavours: classic,franken,tangos (default)
 FLAVOUR	  ?= tangos
@@ -139,6 +138,7 @@ diff:
 	cd $(BUILD_TMP) && \
 	diff -NEbur --exclude-from=$(PWD)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
 
+include make/buildenv.mk
 include make/archives.mk
 include make/system-libs.mk
 include make/neutrino.mk
