@@ -93,7 +93,7 @@ $(N_SRC):
 	$(GITCLONE)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
 	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
 	(cd $(BUILD_TMP)/neutrino-mp; git checkout $(GITBRANCHNMP);); \
-	$(call post_patch,$(N_SRC),$(N_PATCHES)) \
+	$(call post_patch,$(N_SRC),$(N_PATCHES))
 	cp -ra $(BUILD_TMP)/neutrino-mp $(BUILD_TMP)/neutrino-mp.org
 	$(FINISH_BUILD)
 
