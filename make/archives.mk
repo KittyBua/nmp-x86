@@ -45,8 +45,11 @@ GITREPONMP=gui-neutrino
 GITBRANCHNMP=pu/mp
 GITNAMESTBHAL=tuxbox-neutrino
 GITREPOSTBHAL=library-stb-hal
+N_PATCHES += $(PATCHES)/neutrino-mp.unicable2-jess.diff
 N_PATCHES += $(TB_PATCHES)
+LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
+
 else
 ifeq ($(FLAVOUR), vanilla)
 GITNAMENMP=neutrino-mp
@@ -54,7 +57,9 @@ GITREPONMP=neutrino-mp
 GITBRANCHNMP=master
 GITNAMESTBHAL=neutrino-mp
 GITREPOSTBHAL=libstb-hal
+N_PATCHES += $(PATCHES)/neutrino-mp.unicable2-jess.diff
 N_PATCHES += $(VA_PATCHES)
+LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
 else
 GITNAMENMP=TangoCash

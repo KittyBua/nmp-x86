@@ -1,0 +1,295 @@
+diff --git a/data/locale/deutsch.locale b/data/locale/deutsch.locale
+index 13c1d04..faaa975 100644
+--- a/data/locale/deutsch.locale
++++ b/data/locale/deutsch.locale
+@@ -2215,6 +2215,7 @@ satsetup.smatvremote SMATV Remote Tuning
+ satsetup.uncomm_input Uncommitted
+ satsetup.uni_settings Unicable Einstellungen
+ satsetup.unicable Unicable
++satsetup.unicable2 Unicable 2 (Jess)
+ satsetup.usals_repeat USALS wiederholen
+ satsetup.use_bat Benutze BAT
+ satsetup.use_fta_flag nur FTA KanÃ¤le
+diff --git a/data/locale/english.locale b/data/locale/english.locale
+index c9b76ef..944345e 100644
+--- a/data/locale/english.locale
++++ b/data/locale/english.locale
+@@ -2215,6 +2215,7 @@ satsetup.smatvremote SMATV Remote Tuning
+ satsetup.uncomm_input Uncommited input
+ satsetup.uni_settings Unicable Settings
+ satsetup.unicable Unicable
++satsetup.unicable2 Unicable 2 (Jess)
+ satsetup.usals_repeat USALS command repeat
+ satsetup.use_bat Use BAT
+ satsetup.use_fta_flag just free Channels
+diff --git a/src/gui/scan_setup.cpp b/src/gui/scan_setup.cpp
+index c3182cf..fb50edc 100644
+--- a/src/gui/scan_setup.cpp
++++ b/src/gui/scan_setup.cpp
+@@ -89,7 +89,7 @@ const CMenuOptionChooser::keyval SCANTS_ZAPIT_SCANTYPE[SCANTS_ZAPIT_SCANTYPE_COU
+ 	{  CServiceScan::SCAN_ALL	, LOCALE_ZAPIT_SCANTYPE_ALL     }
+ };
+ 
+-#define SATSETUP_DISEQC_OPTION_COUNT 6
++#define SATSETUP_DISEQC_OPTION_COUNT 7
+ const CMenuOptionChooser::keyval SATSETUP_DISEQC_OPTIONS[SATSETUP_DISEQC_OPTION_COUNT] =
+ {
+ 	{ NO_DISEQC,		LOCALE_SATSETUP_NODISEQC },
+@@ -98,7 +98,8 @@ const CMenuOptionChooser::keyval SATSETUP_DISEQC_OPTIONS[SATSETUP_DISEQC_OPTION_
+ 	{ DISEQC_1_1,		LOCALE_SATSETUP_DISEQC11 },
+ 	/*{ DISEQC_1_2,	LOCALE_SATSETUP_DISEQC12 },*/
+ 	{ DISEQC_ADVANCED,	LOCALE_SATSETUP_DISEQC_ADVANCED },
+-	{ DISEQC_UNICABLE,	LOCALE_SATSETUP_UNICABLE }
++	{ DISEQC_UNICABLE,	LOCALE_SATSETUP_UNICABLE },
++	{ DISEQC_UNICABLE2,	LOCALE_SATSETUP_UNICABLE2 }
+ //	{ SMATV_REMOTE_TUNING,	LOCALE_SATSETUP_SMATVREMOTE }
+ };
+ 
+@@ -839,7 +840,8 @@ void CScanSetup::setDiseqcOptions(int number)
+ 			mfe_config.diseqcType == DISEQC_1_0 ? LOCALE_SATSETUP_DISEQC10 :
+ 			mfe_config.diseqcType == DISEQC_1_1 ? LOCALE_SATSETUP_DISEQC11 :
+ 			mfe_config.diseqcType == DISEQC_ADVANCED ? LOCALE_SATSETUP_DISEQC_ADVANCED :
+-			LOCALE_SATSETUP_UNICABLE);
++			mfe_config.diseqcType == DISEQC_UNICABLE ? LOCALE_SATSETUP_UNICABLE :
++			LOCALE_SATSETUP_UNICABLE2);
+ 
+ 		if (mode == CFrontend::FE_MODE_LINK_TWIN && mfe_config.diseqcType != DISEQC_UNICABLE) {
+ 			count++;
+@@ -977,7 +979,7 @@ int CScanSetup::showFrontendSetup(int number)
+ 		fsatSetup->setHint("", LOCALE_MENU_HINT_SCAN_SATSETUP);
+ 		setupMenu->addItem(fsatSetup);
+ 
+-		uniSetup	= new CMenuForwarder(LOCALE_SATSETUP_UNI_SETTINGS, (dmode == DISEQC_UNICABLE), NULL, this, "unisetup", CRCInput::convertDigitToKey(shortcut++));
++		uniSetup	= new CMenuForwarder(LOCALE_SATSETUP_UNI_SETTINGS, (dmode == DISEQC_UNICABLE ? true : dmode == DISEQC_UNICABLE2), NULL, this, "unisetup", CRCInput::convertDigitToKey(shortcut++));
+ 		setupMenu->addItem(uniSetup);
+ 
+ 		CMenuWidget * rotorMenu = new CMenuWidget(LOCALE_SATSETUP_EXTENDED_MOTOR, NEUTRINO_ICON_SETTINGS, width);
+@@ -1045,7 +1047,7 @@ int CScanSetup::showUnicableSetup()
+ 	int unicable_scr = fe_config.uni_scr;
+ 	int unicable_qrg = fe_config.uni_qrg;
+ 
+-	CMenuOptionNumberChooser *uniscr = new CMenuOptionNumberChooser(LOCALE_UNICABLE_SCR, &unicable_scr, true, 0, 7);
++	CMenuOptionNumberChooser *uniscr = new CMenuOptionNumberChooser(LOCALE_UNICABLE_SCR, &unicable_scr, true, 0, dmode == DISEQC_UNICABLE ? 7 : 31);
+ 	CIntInput		 *uniqrg = new CIntInput(LOCALE_UNICABLE_QRG, &unicable_qrg, 4, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE);
+ 
+ 	CMenuWidget *uni_setup = new CMenuWidget(LOCALE_SATSETUP_UNI_SETTINGS, NEUTRINO_ICON_SETTINGS, width);
+@@ -1332,7 +1334,7 @@
+ //init tempsat menu
+ void CScanSetup::addScanMenuTempSat(CMenuWidget *temp_sat, sat_config_t & satconfig)
+ {
+-	bool unicable = (dmode == DISEQC_UNICABLE);
++	bool unicable = (dmode == DISEQC_UNICABLE ? true : dmode == DISEQC_UNICABLE2);
+ 	temp_sat->addIntroItems();
+ 
+ 	CMenuOptionNumberChooser	*diseqc = NULL;
+@@ -1309,7 +1311,7 @@ void CScanSetup::addScanMenuTempSat(CMenuWidget *temp_sat, sat_config_t & satcon
+ 	} else {
+ 		if (satconfig.diseqc < 0)
+ 			satconfig.diseqc = 0;
+-		unilnb = new CMenuOptionNumberChooser(LOCALE_UNICABLE_LNB, &satconfig.diseqc, true, 0, 1);
++		unilnb = new CMenuOptionNumberChooser(LOCALE_UNICABLE_LNB, &satconfig.diseqc, true, 0, dmode == DISEQC_UNICABLE ? 1 : 3);
+ 	}
+ 
+ 	CIntInput* lofL = new CIntInput(LOCALE_SATSETUP_LOFL, (int*) &satconfig.lnbOffsetLow, 5, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE);
+@@ -1782,7 +1784,7 @@ bool CScanSetup::changeNotify(const neutrino_locale_t OptionName, void * /*data*
+ 		fe->setDiseqcType((diseqc_t) dmode);
+ 		fe->setTsidOnid(0);
+ 
+-		uniSetup->setActive(dmode == DISEQC_UNICABLE);
++		uniSetup->setActive(dmode == DISEQC_UNICABLE ? true : dmode == DISEQC_UNICABLE2);
+ 		bool enable = (dmode < DISEQC_ADVANCED) && (dmode != NO_DISEQC);
+ 		ojDiseqcRepeats->setActive(enable && !CFrontend::linked(femode) && femode != CFrontend::FE_MODE_UNUSED);
+ 		dorder->setActive(!CFrontend::linked(femode) && femode != CFrontend::FE_MODE_UNUSED && dmode == DISEQC_ADVANCED);
+@@ -1804,7 +1806,7 @@ bool CScanSetup::changeNotify(const neutrino_locale_t OptionName, void * /*data*
+ 				linkfe->setActive(CFrontend::linked(femode));
+ 			/* leave diseqc type enabled for TWIN in case user need different unicable setup */
+ 			dtype->setActive(femode != CFrontend::FE_MODE_UNUSED && femode != CFrontend::FE_MODE_LINK_LOOP);
+-			uniSetup->setActive(dmode == DISEQC_UNICABLE && femode != CFrontend::FE_MODE_UNUSED && femode != CFrontend::FE_MODE_LINK_LOOP);
++			uniSetup->setActive(dmode == DISEQC_UNICABLE ? true : dmode == DISEQC_UNICABLE2 && femode != CFrontend::FE_MODE_UNUSED && femode != CFrontend::FE_MODE_LINK_LOOP);
+ 			dorder->setActive(!CFrontend::linked(femode) && femode != CFrontend::FE_MODE_UNUSED && dmode == DISEQC_ADVANCED);
+ 			fsatSelect->setActive(!CFrontend::linked(femode) && femode != CFrontend::FE_MODE_UNUSED);
+ 			fsatSetup->setActive(!CFrontend::linked(femode) && femode != CFrontend::FE_MODE_UNUSED);
+diff --git a/src/system/locals.h b/src/system/locals.h
+index e4b89e0..d719ffc 100644
+--- a/src/system/locals.h
++++ b/src/system/locals.h
+@@ -2243,6 +2243,7 @@ typedef enum
+ 	LOCALE_SATSETUP_UNCOMM_INPUT,
+ 	LOCALE_SATSETUP_UNI_SETTINGS,
+ 	LOCALE_SATSETUP_UNICABLE,
++	LOCALE_SATSETUP_UNICABLE2,
+ 	LOCALE_SATSETUP_USALS_REPEAT,
+ 	LOCALE_SATSETUP_USE_BAT,
+ 	LOCALE_SATSETUP_USE_FTA_FLAG,
+diff --git a/src/system/locals_intern.h b/src/system/locals_intern.h
+index ebe8219..62338c0 100644
+--- a/src/system/locals_intern.h
++++ b/src/system/locals_intern.h
+@@ -2243,6 +2243,7 @@ const char * locale_real_names[] =
+ 	"satsetup.uncomm_input",
+ 	"satsetup.uni_settings",
+ 	"satsetup.unicable",
++	"satsetup.unicable2",
+ 	"satsetup.usals_repeat",
+ 	"satsetup.use_bat",
+ 	"satsetup.use_fta_flag",
+diff --git a/src/zapit/include/zapit/client/zapittypes.h b/src/zapit/include/zapit/client/zapittypes.h
+index 1751450..aee92a3 100644
+--- a/src/zapit/include/zapit/client/zapittypes.h
++++ b/src/zapit/include/zapit/client/zapittypes.h
+@@ -41,7 +41,8 @@ typedef enum {
+ 	DISEQC_1_1,
+ 	DISEQC_1_2,
+ 	DISEQC_ADVANCED,
+-	DISEQC_UNICABLE
++	DISEQC_UNICABLE,
++	DISEQC_UNICABLE2
+ #if 0
+ 	, DISEQC_2_0,
+ 	DISEQC_2_1,
+diff --git a/src/zapit/include/zapit/frontend_c.h b/src/zapit/include/zapit/frontend_c.h
+index 5940d98..1046514 100644
+--- a/src/zapit/include/zapit/frontend_c.h
++++ b/src/zapit/include/zapit/frontend_c.h
+@@ -166,6 +166,7 @@ class CFrontend
+ 		void				sendDiseqcReset(uint32_t ms = 40);
+ 		void				sendDiseqcSmatvRemoteTuningCommand(const uint32_t frequency);
+ 		uint32_t			sendEN50494TuningCommand(const uint32_t frequency, const int high_band, const int horizontal, const int bank);
++		uint32_t			sendEN50607TuningCommand(const uint32_t frequency, const int high_band, const int horizontal, const int bank);
+ 		void				sendDiseqcZeroByteCommand(const uint8_t frm, const uint8_t addr, const uint8_t cmd, uint32_t ms = 15);
+ 		void				sendToneBurst(const fe_sec_mini_cmd_t burst, const uint32_t ms);
+ 		int				setFrontend(const FrontendParameters *feparams, bool nowait = false);
+diff --git a/src/zapit/src/femanager.cpp b/src/zapit/src/femanager.cpp
+index faf16ff..4513c8b 100644
+--- a/src/zapit/src/femanager.cpp
++++ b/src/zapit/src/femanager.cpp
+@@ -378,7 +378,7 @@ void CFEManager::saveSettings(bool write)
+ void CFEManager::copySettings(CFrontend * from, CFrontend * to)
+ {
+ 	INFO("Copy settings fe %d -> fe %d", from->fenumber, to->fenumber);
+-	if (to->config.diseqcType != DISEQC_UNICABLE || to->getMode() == CFrontend::FE_MODE_LINK_LOOP)
++	if (to->config.diseqcType != DISEQC_UNICABLE || to->config.diseqcType != DISEQC_UNICABLE2 || to->getMode() == CFrontend::FE_MODE_LINK_LOOP)
+ 		to->config.diseqcType = from->config.diseqcType;
+ 
+ 	to->config.diseqcRepeats = from->config.diseqcRepeats;
+diff --git a/src/zapit/src/frontend.cpp b/src/zapit/src/frontend.cpp
+index f337beb..b8eb3b7 100644
+--- a/src/zapit/src/frontend.cpp
++++ b/src/zapit/src/frontend.cpp
+@@ -1178,6 +1178,12 @@ bool CFrontend::buildProperties(const FrontendParameters *feparams, struct dtv_p
+ 							currentVoltage == SEC_VOLTAGE_18,
+ 							!!config.uni_lnb);
+ 
++	if (config.diseqcType == DISEQC_UNICABLE2)
++		cmdseq.props[FREQUENCY].u.data = sendEN50607TuningCommand(feparams->frequency,
++							currentToneMode == SEC_TONE_ON,
++							currentVoltage == SEC_VOLTAGE_18,
++							config.uni_lnb);
++
+ 	cmdseq.num	+= nrOfProps;
+ 
+ 	return true;
+@@ -1335,6 +1341,9 @@ void CFrontend::setDiseqcType(const diseqc_t newDiseqcType, bool force)
+ 	case DISEQC_UNICABLE:
+ 		INFO("fe%d: DISEQC_UNICABLE", fenumber);
+ 		break;
++	case DISEQC_UNICABLE2:
++		INFO("fe%d: DISEQC_UNICABLE2", fenumber);
++		break;
+ #if 0
+ 	case DISEQC_2_0:
+ 		INFO("DISEQC_2_0");
+@@ -1351,7 +1360,7 @@ void CFrontend::setDiseqcType(const diseqc_t newDiseqcType, bool force)
+ 		return;
+ 	}
+ 
+-	if (newDiseqcType == DISEQC_UNICABLE) {
++	if (newDiseqcType == DISEQC_UNICABLE || newDiseqcType == DISEQC_UNICABLE2) {
+ 		secSetTone(SEC_TONE_OFF, 0);
+ 		secSetVoltage(SEC_VOLTAGE_13, 0);
+ 	}
+@@ -1462,7 +1471,7 @@ void CFrontend::setInput(t_satellite_position satellitePosition, uint32_t freque
+ 	config.uni_lnb = sit->second.diseqc;
+ 
+ 	setLnbOffsets(sit->second.lnbOffsetLow, sit->second.lnbOffsetHigh, sit->second.lnbSwitch);
+-	if (config.diseqcType == DISEQC_UNICABLE)
++	if (config.diseqcType == DISEQC_UNICABLE || config.diseqcType == DISEQC_UNICABLE2)
+ 		return;
+ 
+ 
+@@ -1515,6 +1524,39 @@ uint32_t CFrontend::sendEN50494TuningCommand(const uint32_t frequency, const int
+ 	return 0;
+ }
+ 
++uint32_t CFrontend::sendEN50607TuningCommand(const uint32_t frequency, const int high_band, const int horizontal, const int bank)
++{
++	uint32_t bpf = config.uni_qrg;
++	struct dvb_diseqc_master_cmd cmd = { {0x70, 0x00, 0x00, 0x00, 0x00, 0x00}, 4 };
++
++	unsigned int t = frequency / 1000 - 100;
++	if (t < 0x800 && config.uni_scr >= 0 && config.uni_scr < 32)
++	{
++		uint32_t ret = bpf * 1000;
++		INFO("[unicable-JESS] 18V=%d TONE=%d, freq=%d qrg=%d scr=%d bank=%d ret=%d", currentVoltage == SEC_VOLTAGE_18, currentToneMode == SEC_TONE_ON, frequency, bpf, config.uni_scr, bank, ret);
++		if (!slave && info.type == FE_QPSK)
++		{
++			cmd.msg[1] = ((config.uni_scr & 0x1F) << 3)	|	/* user band adress ( 0 to 31) */
++			/* max. possible tuning word = 0x7FF */
++				((t >> 8) & 0x07);				/* highest 3 bits of t (MSB) */
++			cmd.msg[2] = t & 0xFF;					/* tuning word (LSB) */
++			cmd.msg[3] = (0 << 4)				|	/* no uncommited switch */
++			/* I really don't know if the combines of option and position bits are right here,
++			because I can'test it, assuming here 4 sat positions */
++				((bank & 0x03) << 2)			|	/* input 0/1/2/3 */
++				(horizontal << 1)			|	/* horizontal == 0x02 */
++				high_band;					/* high_band  == 0x01 */
++			fop(ioctl, FE_SET_VOLTAGE, SEC_VOLTAGE_18);
++			usleep(15 * 1000);					/* en50494 says: >4ms and < 22 ms */
++			sendDiseqcCommand(&cmd, 50);				/* en50494 says: >2ms and < 60 ms */
++			fop(ioctl, FE_SET_VOLTAGE, SEC_VOLTAGE_13);
++		}
++		return ret;
++	}
++	WARN("ooops. t > 2047? (%d) or uni_scr out of range? (%d)", t, config.uni_scr);
++	return 0;
++}
++
+ bool CFrontend::tuneChannel(CZapitChannel * /*channel*/, bool /*nvod*/)
+ {
+ 	transponder_list_t::iterator transponder = transponders.find(currentTransponder.getTransponderId());
+@@ -1806,6 +1848,32 @@
+ void CFrontend::sendDiseqcStandby(uint32_t ms)
+ {
+ 	printf("[fe%d] diseqc standby\n", fenumber);
++	if (config.diseqcType > DISEQC_ADVANCED)
++	{
++		/* use ODU_Power_OFF command for unicable or jess here
++		to set the used UB frequency of the frontend to standby */
++		struct dvb_diseqc_master_cmd cmd = {{0}, 6};
++		printf("[fe%d] standby scr: %d\n", fenumber, config.uni_scr);
++		if (config.diseqcType == DISEQC_UNICABLE)
++		{
++			cmd.msg[0] = 0xe0;
++			cmd.msg[1] = 0x10;
++			cmd.msg[2] = 0x5a;
++			cmd.msg[3] = ((config.uni_scr & 0x07) << 5);
++			cmd.msg_len = 5;
++		}
++		if (config.diseqcType == DISEQC_UNICABLE2)
++		{
++			cmd.msg[0] = 0x70;
++			cmd.msg[1] = ((config.uni_scr & 0x1F) << 3);
++			cmd.msg_len = 4;
++		}
++		fop(ioctl, FE_SET_VOLTAGE, SEC_VOLTAGE_18);
++		usleep(15 * 1000);
++		sendDiseqcCommand(&cmd, ms);
++		fop(ioctl, FE_SET_VOLTAGE, SEC_VOLTAGE_13);
++		return;
++	}
+ 	if (config.diseqcType == DISEQC_UNICABLE)
+ 		sendEN50494TuningCommand(0, 0, 0, 2);
+ 	/* en50494 switches don't seem to be hurt by this */
+-- 
+1.9.1
+
