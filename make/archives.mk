@@ -39,12 +39,32 @@ GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(TG_PATCHES)
 else
+ifeq ($(FLAVOUR), tuxbox)
+GITNAMENMP=tuxbox-neutrino
+GITREPONMP=gui-neutrino
+GITBRANCHNMP=pu/mp
+GITNAMESTBHAL=tuxbox-neutrino
+GITREPOSTBHAL=library-stb-hal
+N_PATCHES += $(TB_PATCHES)
+LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
+else
+ifeq ($(FLAVOUR), vanilla)
+GITNAMENMP=neutrino-mp
+GITREPONMP=neutrino-mp
+GITBRANCHNMP=master
+GITNAMESTBHAL=neutrino-mp
+GITREPOSTBHAL=libstb-hal
+N_PATCHES += $(VA_PATCHES)
+LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
+else
 GITNAMENMP=TangoCash
 GITREPONMP=neutrino-mp-cst-next
 GITBRANCHNMP=master
 GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(TG_PATCHES)
+endif
+endif
 endif
 endif
 endif
