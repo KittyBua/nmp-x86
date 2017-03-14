@@ -100,6 +100,12 @@ bootstrap: $(BOOTSTRAP)
 run:
 	gdb -ex run $(DEST)/bin/neutrino
 
+run-nogdb:
+	$(DEST)/bin/neutrino
+
+run-valgrind:
+	valgrind --leak-check=full --log-file="valgrind_`date +'%y.%m.%d %H:%M:%S'`.log" -v $(DEST)/bin/neutrino
+
 $(OBJ):
 	mkdir -p $(OBJ)
 $(OBJ)/neutrino-mp \
