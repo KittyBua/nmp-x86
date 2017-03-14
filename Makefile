@@ -125,6 +125,14 @@ update:
 	rm -rf $(OBJ)
 	make default
 
+update-s:
+	rm -rf $(LH_SRC)
+	rm -rf $(LH_SRC).org
+	rm -rf $(N_SRC)
+	rm -rf $(N_SRC).org
+	rm -rf $(OBJ)
+	make neutrino
+
 copy:
 	rm -rf $(LH_SRC).org
 	cp -r $(LH_SRC) $(LH_SRC).org
