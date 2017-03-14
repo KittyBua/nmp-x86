@@ -146,9 +146,16 @@ copy:
 	cp -r $(N_SRC) $(N_SRC).org
 
 diff:
+	make diff-n
+	make diff-lh
+
+diff-n:
 	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \
 	diff -NEbur --exclude-from=$(PWD)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
+
+diff-lh:
+	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \
 	diff -NEbur --exclude-from=$(PWD)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
 
