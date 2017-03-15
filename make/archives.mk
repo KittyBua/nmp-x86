@@ -45,7 +45,6 @@ GITREPONMP=gui-neutrino
 GITBRANCHNMP=pu/mp
 GITNAMESTBHAL=tuxbox-neutrino
 GITREPOSTBHAL=library-stb-hal
-N_PATCHES += $(PATCHES)/neutrino-mp.unicable2-jess.diff
 N_PATCHES += $(TB_PATCHES)
 LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
