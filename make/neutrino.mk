@@ -17,7 +17,7 @@ $(LH_OBJ)/config.status: | $(LH_OBJ) $(LH_SRC)
 	set -e; cd $(LH_OBJ); \
 		$(LH_SRC)/configure --enable-maintainer-mode \
 			--prefix=$(DEST) --enable-shared=no \
-			--enable-gstreamer=yes
+			$(GST-PLAYBACK)
 	$(FINISH_BUILD)
 
 $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
@@ -32,6 +32,7 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--enable-lua \
 			--enable-ffmpegdec \
 			--enable-testing \
+			--enable-fribidi \
 			--with-vardir=$(DEST)/var \
 			--with-datadir=$(DEST)/share/tuxbox \
 			--with-fontdir=$(DEST)/share/fonts \

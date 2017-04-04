@@ -30,12 +30,6 @@ PATCHES    = $(BASE_DIR)/patches
 FLAVOUR	  ?= tangos
 
 N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
-### gcc > 5 needs extra patch
-GCCVERSION_GT5 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 5)
-ifeq ($(GCCVERSION_GT5), 1)
-    N_PATCHES  += $(PATCHES)/fix_DVB_API_VERSION_check_for_gcc5.patch
-endif
-
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
 
 CFLAGS     = -funsigned-char -g -W -Wall -Wshadow -O2
@@ -53,7 +47,10 @@ CFLAGS    += -pthread
 CFLAGS    += $(shell pkg-config --cflags --libs glib-2.0)
 CFLAGS    += $(shell pkg-config --cflags --libs libxml-2.0)
 ### GST
-CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-0.10)
+ifeq ($(shell pkg-config --exists gstreamer-0.10 && echo 1),1)
+	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-0.10)
+	GST-PLAYBACK = --enable-gstreamer=yes
+endif
 
 ### in case some libs are installed in $(DEST) (e.g. dvbsi++ / lua / ffmpeg)
 CFLAGS    += -I$(DEST)/include

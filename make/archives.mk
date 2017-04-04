@@ -64,7 +64,7 @@ else
 GITNAMENMP=TangoCash
 GITREPONMP=neutrino-mp-cst-next
 GITBRANCHNMP=master
-GITNAMESTBHAL=Duckbox-Developers
+GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-cst-next
 N_PATCHES += $(TG_PATCHES)
 endif
