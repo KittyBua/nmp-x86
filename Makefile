@@ -49,7 +49,14 @@ CFLAGS    += $(shell pkg-config --cflags --libs libxml-2.0)
 ### GST
 ifeq ($(shell pkg-config --exists gstreamer-0.10 && echo 1),1)
 	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-0.10)
-	GST-PLAYBACK = --enable-gstreamer=yes
+	GST-PLAYBACK = --enable-gstreamer_01=yes
+endif
+
+ifeq ($(shell pkg-config --exists gstreamer-1.0 && echo 1),1)
+	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-1.0)
+	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-audio-1.0)
+	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-video-1.0)
+	GST-PLAYBACK = --enable-gstreamer_10=yes
 endif
 
 ### in case some libs are installed in $(DEST) (e.g. dvbsi++ / lua / ffmpeg)
