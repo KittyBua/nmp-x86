@@ -2,17 +2,17 @@
 FFMPEG_VER=2.8.6
 LUA_VER=5.2.3
 LUAPOSIX_VER=31
-LIBDVBSI_VER=0.3.7
+LIBDVBSI_VER=0.3.8
 LIBSIGC_VER_MAJ=2.3
 LIBSIGC_VER_MIN=2
 LIBSIGC_VER=$(LIBSIGC_VER_MAJ).$(LIBSIGC_VER_MIN)
 
 ifeq ($(FLAVOUR), classic)
 GITNAMENMP=Duckbox-Developers
-GITREPONMP=neutrino-mp-cst-next
+GITREPONMP=neutrino-mp-ddt
 GITBRANCHNMP=master
 GITNAMESTBHAL=Duckbox-Developers
-GITREPOSTBHAL=libstb-hal-cst-next
+GITREPOSTBHAL=libstb-hal-ddt
 N_PATCHES += $(MP_PATCHES)
 else
 ifeq ($(FLAVOUR), ni)
@@ -33,10 +33,10 @@ N_PATCHES += $(FS_PATCHES)
 else
 ifeq ($(FLAVOUR), skinned)
 GITNAMENMP=TangoCash
-GITREPONMP=neutrino-mp-cst-next
+GITREPONMP=neutrino-mp-tangos
 GITBRANCHNMP=skinned
-GITNAMESTBHAL=Duckbox-Developers
-GITREPOSTBHAL=libstb-hal-cst-next
+GITNAMESTBHAL=TangoCash
+GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
 else
 ifeq ($(FLAVOUR), tuxbox)
@@ -62,10 +62,10 @@ LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
 else
 GITNAMENMP=TangoCash
-GITREPONMP=neutrino-mp-cst-next
+GITREPONMP=neutrino-mp-tangos
 GITBRANCHNMP=master
 GITNAMESTBHAL=TangoCash
-GITREPOSTBHAL=libstb-hal-cst-next
+GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
 endif
 endif
