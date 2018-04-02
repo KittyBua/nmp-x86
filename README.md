@@ -1,14 +1,14 @@
 # nmp-x86/x64
 small build environment for nmp-tangos (or other flavours) for x86/x64
 
+tested with Ubuntu Mate 16.04 x64
+
 | flavour | repo | branch |
 |---|---|---|
-|**tangos**|**TangoCash/neutrino-mp-cst-next**|**master**|
-|classic|Duckbox-Developers/neutrino-mp-cst-next|master|
-|ni|Duckbox-Developers/neutrino-mp-cst-next|ni|
-|franken|fs-basis/neutrino-mp-cst-next|test|
-|skinned|TangoCash/neutrino-mp-cst-next|skinned|
-|tuxbox|tuxbox-neutrino/gui-neutrino|pu/mp|
+|**tangos**|**TangoCash/neutrino-mp-tangos**|**master**|
+|classic|Duckbox-Developers/neutrino-mp-ddt|master|
+|franken|fs-basis/neutrino-mp-fs|master|
+|tuxbox|tuxbox-neutrino/gui-neutrino|master|
 |vanilla|neutrino-mp/neutrino-mp|master|
 
 **add flavour with:**
@@ -25,6 +25,9 @@ _or_
 - `libglew-dev freeglut3-dev libcurl4-gnutls-dev libfreetype6-dev libid3tag0-dev`
 - `libmad0-dev libogg-dev libpng12-dev libgif-dev libjpeg62-dev libvorbis-dev`
 - `libflac-dev libblkid-dev libao-dev libfribidi0 libfribidi-dev`
-- `libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev`
+- `libgstreamer1.0-0 libgstreamer-plugins-base1.0-0`
+- `libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-good1.0-0`
+- `libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev`
+- `libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-good1.0-dev`
 
 

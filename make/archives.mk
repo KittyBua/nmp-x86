@@ -15,29 +15,13 @@ GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-ddt
 N_PATCHES += $(MP_PATCHES)
 else
-ifeq ($(FLAVOUR), ni)
-GITNAMENMP=Duckbox-Developers
-GITREPONMP=neutrino-mp-cst-next
-GITBRANCHNMP=ni
-GITNAMESTBHAL=Duckbox-Developers
-GITREPOSTBHAL=libstb-hal-cst-next
-N_PATCHES += $(MP_PATCHES)
-else
 ifeq ($(FLAVOUR), franken)
 GITNAMENMP=fs-basis
-GITREPONMP=neutrino-mp-cst-next
-GITBRANCHNMP=test
-GITNAMESTBHAL=Duckbox-Developers
-GITREPOSTBHAL=libstb-hal-cst-next
+GITREPONMP=neutrino-mp-fs
+GITBRANCHNMP=master
+GITNAMESTBHAL=fs-basis
+GITREPOSTBHAL=libstb-hal-fs
 N_PATCHES += $(FS_PATCHES)
-else
-ifeq ($(FLAVOUR), skinned)
-GITNAMENMP=TangoCash
-GITREPONMP=neutrino-mp-tangos
-GITBRANCHNMP=skinned
-GITNAMESTBHAL=TangoCash
-GITREPOSTBHAL=libstb-hal-tangos
-N_PATCHES += $(TG_PATCHES)
 else
 ifeq ($(FLAVOUR), tuxbox)
 GITNAMENMP=tuxbox-neutrino
@@ -67,8 +51,6 @@ GITBRANCHNMP=master
 GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
-endif
-endif
 endif
 endif
 endif
