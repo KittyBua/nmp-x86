@@ -1,6 +1,6 @@
 # ffmpeg parameters taken from max-git - used to build ffmpeg to our custom lib dir
 FFMPEG_CONFIGURE  = --disable-static --enable-shared --enable-small --disable-runtime-cpudetect
-FFMPEG_CONFIGURE += --disable-ffserver --disable-ffplay --disable-ffprobe
+FFMPEG_CONFIGURE += --disable-ffserver --disable-ffprobe
 FFMPEG_CONFIGURE += --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages
 FFMPEG_CONFIGURE += --disable-asm --disable-altivec --disable-amd3dnow --disable-amd3dnowext --disable-mmx --disable-mmxext
 FFMPEG_CONFIGURE += --disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse4 --disable-sse42 --disable-avx --disable-fma4
@@ -55,6 +55,8 @@ $(D)/libdvbsipp: $(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	rm -rf $(BUILD_TMP)/libdvbsi++-$(LIBDVBSI_VER); \
 	$(UNTAR)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/libdvbsi++-$(LIBDVBSI_VER); \
+		$(PATCH)/libdvbsi++-$(LIBDVBSI_VER).patch; \
+		./autogen.sh; \
 		./configure --prefix=$(DEST); \
 		$(MAKE); \
 		make install
