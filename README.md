@@ -21,7 +21,7 @@ _or_
 
 `sudo apt-get install`
 - `build-essential autoconf libtool libtool-bin g++ gdb ccache`
-- `libavformat-dev libswscale-dev libopenthreads-dev`
+- `libavformat-dev libswscale-dev libopenthreads-dev libbz2-dev`
 - `libglew-dev freeglut3-dev libcurl4-gnutls-dev libfreetype6-dev libid3tag0-dev`
 - `libmad0-dev libogg-dev libpng12-dev libgif-dev libjpeg62-dev libvorbis-dev`
 - `libflac-dev libblkid-dev libao-dev libfribidi0 libfribidi-dev`
