@@ -47,7 +47,7 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--with-target=native --with-boxtype=$(BOXTYPE) \
 			--with-stb-hal-includes=$(LH_SRC)/include \
 			--with-stb-hal-build=$(DEST)/lib \
-			; \
+			$(LOCAL_NEUTRINO_BUILD_OPTIONS); \
 		test -e svn_version.h || echo '#define BUILT_DATE "error - not set"' > svn_version.h; \
 		test -e git_version.h || echo '#define BUILT_DATE "error - not set"' > git_version.h; \
 		test -e version.h || touch version.h
