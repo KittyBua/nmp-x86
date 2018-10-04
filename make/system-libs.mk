@@ -264,7 +264,7 @@ $(D)/ffmpeg: $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2
 		make install
 	touch $@
 
-$(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-5.2.3-luaposix-31.patch
+$(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-$(LUA_VER)-luaposix-31.patch
 	rm -rf $(BUILD_TMP)/lua-$(LUA_VER); \
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER); \
