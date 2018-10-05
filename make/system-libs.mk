@@ -293,16 +293,3 @@ $(D)/libdvbsipp: $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2
 		make install
 	touch $@
 
-$(D)/libsigcpp: $(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz
-	rm -rf $(BUILD_TMP)/libsigc++-$(LIBSIGC_VER); \
-	$(UNTAR)/libsigc++-$(LIBSIGC_VER).tar.xz
-	set -e; cd $(BUILD_TMP)/libsigc++-$(LIBSIGC_VER); \
-		./configure \
-			--prefix=$(DEST) \
-			--enable-shared \
-			--disable-documentation; \
-		$(MAKE); \
-		make install
-		mv $(DEST)/lib/sigc++-2.0/include/sigc++config.h $(DEST)/include
-	touch $@
-

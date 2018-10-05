@@ -14,6 +14,7 @@ ARCHIVE    = $(HOME)/Archive
 BASE_DIR   = $(PWD)
 BUILD_TMP  = $(BASE_DIR)/build_tmp
 OBJ        = $(BASE_DIR)/obj
+SCRIPTS    = $(BASE_DIR)/scripts
 
 BOXTYPE    = generic
 DEST       = $(BASE_DIR)/$(BOXTYPE)
@@ -25,6 +26,9 @@ N_SRC      = $(BUILD_TMP)/neutrino-mp
 N_OBJ      = $(OBJ)/neutrino-mp
 
 PATCHES    = $(BASE_DIR)/patches
+
+PARALLEL_JOBS := $(shell echo $$((1 + `getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1`)))
+override MAKE = make $(if $(findstring j,$(filter-out --%,$(MAKEFLAGS))),,-j$(PARALLEL_JOBS)) $(SILENT_OPT)
 
 #supported flavours: classic,franken,tangos (default)
 FLAVOUR	  ?= tangos
@@ -59,18 +63,29 @@ ifeq ($(shell pkg-config --exists gstreamer-1.0 && echo 1),1)
 	GST-PLAYBACK = --enable-gstreamer_10=yes
 endif
 
+### workaround for debian's non-std sigc++ locations
+CFLAGS += -I/usr/include/sigc++-2.0
+CFLAGS += -I/usr/lib/x86_64-linux-gnu/sigc++-2.0/include
+
 ### in case some libs are installed in $(DEST) (e.g. dvbsi++ / lua / ffmpeg)
 CFLAGS    += -I$(DEST)/include
-CFLAGS    += -I$(DEST)/include/sigc++-2.0
 CFLAGS    += -L$(DEST)/lib
+CFLAGS    += -L$(DEST)/lib64
+
 PKG_CONFIG_PATH = $(DEST)/lib/pkgconfig
 export PKG_CONFIG_PATH
 
 CXXFLAGS = $(CFLAGS)
 export CFLAGS CXXFLAGS
 
+# Prepend ccache into the PATH
+PATH := $(PATH):/usr/lib/ccache/
+CC    = ccache gcc
+CXX   = ccache g++
+export CC CXX PATH
+
 ### export our custom lib dir
-export LD_LIBRARY_PATH=$(DEST)/lib
+#export LD_LIBRARY_PATH=$(DEST)/lib
 
 ### in case no frontend is available uncomment next 3 lines
 #export SIMULATE_FE=1
@@ -87,7 +102,7 @@ UNTAR = tar -C $(BUILD_TMP) -xf $(ARCHIVE)
 BOOTSTRAP = $(ARCHIVE) $(BUILD_TMP) $(D)
 
 # first target is default...
-default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(D)/libsigcpp neutrino
+default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua neutrino
 	make run
 
 $(ARCHIVE):
@@ -156,12 +171,12 @@ diff:
 diff-n:
 	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \
-	diff -NEur --exclude-from=$(PWD)/scripts/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
+	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
 
 diff-lh:
 	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \
-	diff -NEur --exclude-from=$(PWD)/scripts/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
+	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
 
 include make/buildenv.mk
 include make/archives.mk
