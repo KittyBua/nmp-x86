@@ -47,9 +47,9 @@ GITBRANCHNMP=pu/mp
 GITNAMESTBHAL=tuxbox-neutrino
 GITREPOSTBHAL=library-stb-hal
 GITBRANCHSTBHAL=mpx
+N_PATCHES += $(PATCHES)/neutrino-mp.tuxbox.diff
 N_PATCHES += $(TB_PATCHES)
 LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
-LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
 else
 ifeq ($(FLAVOUR), vanilla)
 GIT_URL=https://github.com
