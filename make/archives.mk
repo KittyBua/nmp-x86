@@ -3,41 +3,58 @@ FFMPEG_VER=4.0.2
 LUA_VER=5.2.4
 LUAPOSIX_VER=31
 LIBDVBSI_VER=ff57e58
-LIBSIGC_VER_MAJ=2.3
-LIBSIGC_VER_MIN=2
-LIBSIGC_VER=$(LIBSIGC_VER_MAJ).$(LIBSIGC_VER_MIN)
+
+GITBRANCHNMP=master
+GITBRANCHSTBHAL=master
 
 ifeq ($(FLAVOUR), classic)
+GIT_URL=https://github.com
 GITNAMENMP=Duckbox-Developers
 GITREPONMP=neutrino-mp-ddt
-GITBRANCHNMP=master
 GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-ddt
 N_PATCHES += $(MP_PATCHES)
 else
+ifeq ($(FLAVOUR), max)
+GIT_URL=https://bitbucket.org
+GITNAMENMP=max_10
+GITREPONMP=neutrino-mp-max
+GITNAMESTBHAL=max_10
+GITREPOSTBHAL=libstb-hal-max
+N_PATCHES += $(MAX_PATCHES)
+else
+ifeq  ($(FLAVOUR), ni)
+GIT_URL=https://bitbucket.org
+GITNAMENMP=neutrino-images
+GITREPONMP=ni-neutrino-hd
+GITBRANCHNMP=ni/mp/tuxbox
+GITNAMESTBHAL=neutrino-images
+GITREPOSTBHAL=ni-libstb-hal-next
+else
 ifeq ($(FLAVOUR), franken)
+GIT_URL=https://github.com
 GITNAMENMP=fs-basis
 GITREPONMP=neutrino-mp-fs
-GITBRANCHNMP=master
 GITNAMESTBHAL=fs-basis
 GITREPOSTBHAL=libstb-hal-fs
 N_PATCHES += $(FS_PATCHES)
 else
 ifeq ($(FLAVOUR), tuxbox)
+GIT_URL=https://github.com
 GITNAMENMP=tuxbox-neutrino
 GITREPONMP=gui-neutrino
 GITBRANCHNMP=pu/mp
 GITNAMESTBHAL=tuxbox-neutrino
 GITREPOSTBHAL=library-stb-hal
+GITBRANCHSTBHAL=mpx
 N_PATCHES += $(TB_PATCHES)
 LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
-
 else
 ifeq ($(FLAVOUR), vanilla)
+GIT_URL=https://github.com
 GITNAMENMP=neutrino-mp
 GITREPONMP=neutrino-mp
-GITBRANCHNMP=master
 GITNAMESTBHAL=neutrino-mp
 GITREPOSTBHAL=libstb-hal
 N_PATCHES += $(PATCHES)/neutrino-mp.unicable2-jess.diff
@@ -45,9 +62,9 @@ N_PATCHES += $(VA_PATCHES)
 LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
 else
+GIT_URL=https://github.com
 GITNAMENMP=TangoCash
 GITREPONMP=neutrino-mp-tangos
-GITBRANCHNMP=master
 GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
@@ -55,8 +72,11 @@ endif
 endif
 endif
 endif
+endif
+endif
 
-GITCLONE=git clone -b $(GITBRANCHNMP) git://github.com
+GITCLONE_NMP=git clone -b $(GITBRANCHNMP) $(GIT_URL)
+GITCLONE_STBHAL=git clone -b $(GITBRANCHSTBHAL) $(GIT_URL)
 
 # ffmpeg
 $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2:
@@ -72,11 +92,7 @@ $(ARCHIVE)/lua-$(LUA_VER).tar.gz:
 
 # libdvbsi
 $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2:
-	$(PWD)/scripts/get-git-archive.sh git://git.opendreambox.org/git/obi/libdvbsi++.git $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)
-
-# libsigc
-$(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz:
-	$(WGET) http://ftp.gnome.org/pub/GNOME/sources/libsigc++/$(LIBSIGC_VER_MAJ)/libsigc++-$(LIBSIGC_VER).tar.xz
+	$(SCRIPTS)/get-git-archive.sh git://git.opendreambox.org/git/obi/libdvbsi++.git $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)
 
 # stb-hal
 $(LH_SRC):
@@ -84,7 +100,7 @@ $(LH_SRC):
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
 	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_TMP)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] || \
-	$(GITCLONE)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
+	$(GITCLONE_STBHAL)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
 	cp -ra $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git $(BUILD_TMP)/libstb-hal;\
 	cp -ra $(BUILD_TMP)/libstb-hal $(BUILD_TMP)/libstb-hal.org
 	$(call post_patch,$(LH_SRC),$(LH_PATCHES))
@@ -96,7 +112,7 @@ $(N_SRC):
 	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] && \
 	(cd $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; git pull; cd "$(BASE_DIR)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] || \
-	$(GITCLONE)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
+	$(GITCLONE_NMP)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
 	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
 	(cd $(BUILD_TMP)/neutrino-mp; git checkout $(GITBRANCHNMP);); \
 	$(call post_patch,$(N_SRC),$(N_PATCHES))
