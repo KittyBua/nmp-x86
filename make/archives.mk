@@ -2,7 +2,7 @@
 FFMPEG_VER=4.0.2
 LUA_VER=5.2.4
 LUAPOSIX_VER=31
-LIBDVBSI_VER=0.3.8
+LIBDVBSI_VER=ff57e58
 LIBSIGC_VER_MAJ=2.3
 LIBSIGC_VER_MIN=2
 LIBSIGC_VER=$(LIBSIGC_VER_MAJ).$(LIBSIGC_VER_MIN)
@@ -71,8 +71,8 @@ $(ARCHIVE)/lua-$(LUA_VER).tar.gz:
 	$(WGET) http://www.lua.org/ftp/lua-$(LUA_VER).tar.gz
 
 # libdvbsi
-$(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2:
-	$(WGET) http://www.saftware.de/libdvbsi++/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
+$(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2:
+	$(PWD)/scripts/get-git-archive.sh git://git.opendreambox.org/git/obi/libdvbsi++.git $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)
 
 # libsigc
 $(ARCHIVE)/libsigc++-$(LIBSIGC_VER).tar.xz:

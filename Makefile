@@ -156,12 +156,12 @@ diff:
 diff-n:
 	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \
-	diff -NEur --exclude-from=$(PWD)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
+	diff -NEur --exclude-from=$(PWD)/scripts/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
 
 diff-lh:
 	mkdir -p $(PWD)/own_patch
 	cd $(BUILD_TMP) && \
-	diff -NEur --exclude-from=$(PWD)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
+	diff -NEur --exclude-from=$(PWD)/scripts/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
 
 include make/buildenv.mk
 include make/archives.mk
