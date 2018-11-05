@@ -62,12 +62,22 @@ N_PATCHES += $(VA_PATCHES)
 LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
 LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
 else
+ifeq ($(FLAVOUR), skinned)
+GIT_URL=https://github.com
+GITNAMENMP=TangoCash
+GITREPONMP=neutrino-mp-tangos
+GITBRANCHNMP=skinned
+GITNAMESTBHAL=TangoCash
+GITREPOSTBHAL=libstb-hal-tangos
+N_PATCHES += $(TG_PATCHES)
+else
 GIT_URL=https://github.com
 GITNAMENMP=TangoCash
 GITREPONMP=neutrino-mp-tangos
 GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
+endif
 endif
 endif
 endif
