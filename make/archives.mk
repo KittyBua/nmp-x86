@@ -10,7 +10,7 @@ GITBRANCHSTBHAL=master
 ifeq ($(FLAVOUR), classic)
 GIT_URL=https://github.com
 GITNAMENMP=Duckbox-Developers
-GITREPONMP=neutrino-mp-ddt
+GITREPONMP=neutrino-ddt
 GITNAMESTBHAL=Duckbox-Developers
 GITREPOSTBHAL=libstb-hal-ddt
 N_PATCHES += $(MP_PATCHES)
@@ -65,7 +65,7 @@ else
 ifeq ($(FLAVOUR), skinned)
 GIT_URL=https://github.com
 GITNAMENMP=TangoCash
-GITREPONMP=neutrino-mp-tangos
+GITREPONMP=neutrino-tangos
 GITBRANCHNMP=skinned
 GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-tangos
@@ -73,7 +73,7 @@ N_PATCHES += $(TG_PATCHES)
 else
 GIT_URL=https://github.com
 GITNAMENMP=TangoCash
-GITREPONMP=neutrino-mp-tangos
+GITREPONMP=neutrino-tangos
 GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
