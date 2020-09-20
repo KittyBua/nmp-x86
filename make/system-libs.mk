@@ -253,21 +253,23 @@ FFMPEG_PATCH += ffmpeg-$(FFMPEG_VER)-fix-hls.patch
 FFMPEG_PATCH += ffmpeg-$(FFMPEG_VER)-fix_mpegts.patch
 FFMPEG_PATCH += ffmpeg-$(FFMPEG_VER)-hls_replace_key_uri.patch
 FFMPEG_PATCH += ffmpeg-$(FFMPEG_VER)-mips64_cpu_detection.patch
+FFMPEG_PATCH += ffmpeg-$(FFMPEG_VER)-corrupt-h264-frames.patch
+FFMPEG_PATCH += ffmpeg-$(FFMPEG_VER)-FFmpeg-devel-amfenc-Add-support-for-pict_type-field.patch
 
 $(D)/ffmpeg: $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2
-	rm -rf cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
+	rm -rf cd $(BUILD_SRC)/ffmpeg-$(FFMPEG_VER); \
 	$(UNTAR)/ffmpeg-$(FFMPEG_VER).tar.bz2
-	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
-		$(call post_patch,$(BUILD_TMP)/ffmpeg-$(FFMPEG_VER),$(FFMPEG_PATCH)); \
+	set -e; cd $(BUILD_SRC)/ffmpeg-$(FFMPEG_VER); \
+		$(call post_patch,$(BUILD_SRC)/ffmpeg-$(FFMPEG_VER),$(FFMPEG_PATCH)); \
 		./configure --prefix=$(DEST) $(FFMPEG_CONFIGURE) ; \
 		$(MAKE); \
 		make install
 	touch $@
 
 $(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz $(PATCHES)/liblua-$(LUA_VER)-luaposix-31.patch
-	rm -rf $(BUILD_TMP)/lua-$(LUA_VER); \
+	rm -rf $(BUILD_SRC)/lua-$(LUA_VER); \
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
-	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER); \
+	set -e; cd $(BUILD_SRC)/lua-$(LUA_VER); \
 		$(PATCH)/liblua-$(LUA_VER)-luaposix-$(LUAPOSIX_VER).patch; \
 		tar xf $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz; \
 		cd luaposix-$(LUAPOSIX_VER)/ext; cp posix/posix.c include/lua52compat.h ../../src/; cd ../..; \
@@ -283,9 +285,9 @@ $(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).
 	touch $@
 
 $(D)/libdvbsipp: $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2
-	rm -rf $(BUILD_TMP)/libdvbsi-git-$(LIBDVBSI_VER); \
+	rm -rf $(BUILD_SRC)/libdvbsi-git-$(LIBDVBSI_VER); \
 	$(UNTAR)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2
-	set -e; cd $(BUILD_TMP)/libdvbsi-git-$(LIBDVBSI_VER); \
+	set -e; cd $(BUILD_SRC)/libdvbsi-git-$(LIBDVBSI_VER); \
 		$(PATCH)/libdvbsi-git-$(LIBDVBSI_VER).patch; \
 		./autogen.sh; \
 		./configure --prefix=$(DEST); \

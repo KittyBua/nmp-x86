@@ -1,7 +1,7 @@
 Makefile.local
-generic
-obj
+build_sysroot/*
 deps/*
 build_tmp/*
 own_build/*
 own_patch/*
+build_source/*

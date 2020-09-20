@@ -12,18 +12,18 @@
 
 ARCHIVE    = $(HOME)/Archive
 BASE_DIR   = $(PWD)
-BUILD_TMP  = $(BASE_DIR)/build_tmp
-OBJ        = $(BASE_DIR)/obj
+BUILD_SRC  = $(BASE_DIR)/build_source
+BUILD_TMP        = $(BASE_DIR)/build_tmp
 SCRIPTS    = $(BASE_DIR)/scripts
 
 BOXTYPE    = generic
-DEST       = $(BASE_DIR)/$(BOXTYPE)
+DEST       = $(BASE_DIR)/build_sysroot
 D          = $(BASE_DIR)/deps
 
-LH_SRC     = $(BUILD_TMP)/libstb-hal
-LH_OBJ     = $(OBJ)/libstb-hal
-N_SRC      = $(BUILD_TMP)/neutrino-mp
-N_OBJ      = $(OBJ)/neutrino-mp
+LH_SRC     = $(BUILD_SRC)/libstb-hal
+LH_OBJ     = $(BUILD_TMP)/libstb-hal
+N_SRC      = $(BUILD_SRC)/neutrino
+N_OBJ      = $(BUILD_TMP)/neutrino
 
 PATCHES    = $(BASE_DIR)/patches
 
@@ -86,6 +86,7 @@ export CC CXX PATH
 
 ### export our custom lib dir
 #export LD_LIBRARY_PATH=$(DEST)/lib
+export LUA_PATH=$(DEST)/share/lua/5.2/?.lua;;
 
 ### in case no frontend is available uncomment next 3 lines
 #export SIMULATE_FE=1
@@ -97,9 +98,9 @@ export NO_SLOW_ADDEVENT=1
 WGET = wget --no-check-certificate -t6 -T20 -c -P $(ARCHIVE)
 
 # unpack tarballs
-UNTAR = tar -C $(BUILD_TMP) -xf $(ARCHIVE)
+UNTAR = tar -C $(BUILD_SRC) -xf $(ARCHIVE)
 
-BOOTSTRAP = $(ARCHIVE) $(BUILD_TMP) $(D)
+BOOTSTRAP = $(ARCHIVE) $(BUILD_SRC) $(D)
 
 # first target is default...
 default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua neutrino
@@ -108,8 +109,8 @@ default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua neutrino
 $(ARCHIVE):
 	mkdir -p $(ARCHIVE)
 
-$(BUILD_TMP):
-	mkdir -p $(BUILD_TMP)
+$(BUILD_SRC):
+	mkdir -p $(BUILD_SRC)
 
 $(D):
 	mkdir -p $(D)
@@ -125,10 +126,10 @@ run-nogdb:
 run-valgrind:
 	valgrind --leak-check=full --log-file="valgrind_`date +'%y.%m.%d %H:%M:%S'`.log" -v $(DEST)/bin/neutrino
 
-$(OBJ):
-	mkdir -p $(OBJ)
-$(OBJ)/neutrino-mp \
-$(OBJ)/libstb-hal: | $(OBJ)
+$(BUILD_TMP):
+	mkdir -p $(BUILD_TMP)
+$(BUILD_TMP)/neutrino \
+$(BUILD_TMP)/libstb-hal: | $(BUILD_TMP)
 	mkdir -p $@
 
 clean:
@@ -137,17 +138,17 @@ clean:
 	rm -rf $(N_OBJ) $(LH_OBJ)
 
 distclean:
-	rm -rf $(BUILD_TMP)
+	rm -rf $(BUILD_SRC)
 	rm -rf $(D)
 	rm -rf $(DEST)
-	rm -rf $(OBJ)
+	rm -rf $(BUILD_TMP)
 
 update:
 	rm -rf $(LH_SRC)
 	rm -rf $(LH_SRC).org
 	rm -rf $(N_SRC)
 	rm -rf $(N_SRC).org
-	rm -rf $(OBJ)
+	rm -rf $(BUILD_TMP)
 	make default
 
 update-s:
@@ -155,7 +156,7 @@ update-s:
 	rm -rf $(LH_SRC).org
 	rm -rf $(N_SRC)
 	rm -rf $(N_SRC).org
-	rm -rf $(OBJ)
+	rm -rf $(BUILD_TMP)
 	make neutrino
 
 copy:
@@ -169,14 +170,12 @@ diff:
 	make diff-lh
 
 diff-n:
-	mkdir -p $(PWD)/own_patch
-	cd $(BUILD_TMP) && \
-	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude neutrino-mp.org neutrino-mp > $(PWD)/own_patch/neutrino-mp.pc.diff ; [ $$? -eq 1 ]
+	cd $(BUILD_SRC) && \
+	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude neutrino.org neutrino > $(PWD)/neutrino.pc.diff ; [ $$? -eq 1 ]
 
 diff-lh:
-	mkdir -p $(PWD)/own_patch
-	cd $(BUILD_TMP) && \
-	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/own_patch/libstb-hal.pc.diff ; [ $$? -eq 1 ]
+	cd $(BUILD_SRC) && \
+	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/libstb-hal.pc.diff ; [ $$? -eq 1 ]
 
 include make/buildenv.mk
 include make/archives.mk

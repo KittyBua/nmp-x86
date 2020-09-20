@@ -1,3 +1,29 @@
+N_CONFIG_OPTS += \
+	--with-libdir=$(DEST)/lib \
+	--with-datadir=$(DEST)/share/tuxbox \
+	--with-fontdir=$(DEST)/share/fonts \
+	--with-fontdir_var=$(DEST)/var/tuxbox/fonts \
+	--with-configdir=$(DEST)/var/tuxbox/config \
+	--with-gamesdir=$(DEST)/var/tuxbox/games \
+	--with-iconsdir=$(DEST)/share/tuxbox/neutrino/icons \
+	--with-iconsdir_var=$(DEST)/var/tuxbox/icons \
+	--with-localedir=$(DEST)/share/tuxbox/neutrino/locale \
+	--with-localedir_var=$(DEST)/var/tuxbox/locale \
+	--with-plugindir=$(DEST)/share/tuxbox/neutrino/plugins \
+	--with-plugindir_var=$(DEST)/var/tuxbox/plugins \
+	--with-lcd4liconsdir_var=$(DEST)/var/tuxbox/lcd/icons \
+	--with-luaplugindir=$(DEST)/var/tuxbox/plugins \
+	--with-public_httpddir=$(DEST)/var/tuxbox/httpd \
+	--with-private_httpddir=$(DEST)/share/tuxbox/neutrino/httpd \
+	--with-themesdir=$(DEST)/share/tuxbox/neutrino/themes \
+	--with-themesdir_var=$(DEST)/var/tuxbox/themes \
+	--with-webtvdir=$(DEST)/share/tuxbox/neutrino/webtv \
+	--with-webtvdir_var=$(DEST)/var/tuxbox/webtv \
+	--with-webradiodir=$(DEST)/share/tuxbox/neutrino/webradio \
+	--with-webradiodir_var=$(DEST)/var/tuxbox/webradio \
+	--with-controldir=$(DEST)/share/tuxbox/neutrino/control \
+	--with-controldir_var=$(DEST)/var/tuxbox/control
+
 neutrino: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(N_OBJ)/config.status
 	$(START_BUILD)
 	-rm $(N_OBJ)/src/neutrino # force relinking on changed libstb-hal
@@ -33,17 +59,9 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--enable-ffmpegdec \
 			--enable-testing \
 			--enable-fribidi \
-			--with-vardir=$(DEST)/var \
-			--with-datadir=$(DEST)/share/tuxbox \
-			--with-fontdir=$(DEST)/share/fonts \
-			--with-gamesdir=$(DEST)/var/tuxbox/games \
-			--with-plugindir=$(DEST)/var/tuxbox/plugins \
-			--with-configdir=$(DEST)/var/tuxbox/config \
-			--with-iconsdir=$(DEST)/share/tuxbox/neutrino/icons \
-			--with-localedir=$(DEST)/share/tuxbox/neutrino/locale \
-			--with-private_httpddir=$(DEST)/share/tuxbox/neutrino/httpd \
-			--with-themesdir=$(DEST)/share/tuxbox/neutrino/themes \
-			--with-isocodesdir=$(DEST)/share/iso-codes \
+			--enable-lcd4linux \
+			--disable-upnp \
+			$(N_CONFIG_OPTS) \
 			--with-target=native --with-boxtype=$(BOXTYPE) \
 			--with-stb-hal-includes=$(LH_SRC)/include \
 			--with-stb-hal-build=$(DEST)/lib \

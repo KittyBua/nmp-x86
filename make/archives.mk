@@ -1,5 +1,5 @@
 # 
-FFMPEG_VER=4.0.2
+FFMPEG_VER=4.3.1
 LUA_VER=5.2.4
 LUAPOSIX_VER=31
 LIBDVBSI_VER=ff57e58
@@ -108,11 +108,11 @@ $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2:
 $(LH_SRC):
 	$(START_BUILD)
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
-	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_TMP)";); \
+	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_SRC)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] || \
 	$(GITCLONE_STBHAL)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
-	cp -ra $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git $(BUILD_TMP)/libstb-hal;\
-	cp -ra $(BUILD_TMP)/libstb-hal $(BUILD_TMP)/libstb-hal.org
+	cp -ra $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git $(BUILD_SRC)/libstb-hal;\
+	cp -ra $(BUILD_SRC)/libstb-hal $(BUILD_SRC)/libstb-hal.org
 	$(call post_patch,$(LH_SRC),$(LH_PATCHES))
 	$(FINISH_BUILD)
 
@@ -123,9 +123,9 @@ $(N_SRC):
 	(cd $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; git pull; cd "$(BASE_DIR)";); \
 	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] || \
 	$(GITCLONE_NMP)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
-	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_TMP)/neutrino-mp; \
-	(cd $(BUILD_TMP)/neutrino-mp; git checkout $(GITBRANCHNMP);); \
+	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_SRC)/neutrino; \
+	(cd $(BUILD_SRC)/neutrino; git checkout $(GITBRANCHNMP);); \
 	$(call post_patch,$(N_SRC),$(N_PATCHES))
-	cp -ra $(BUILD_TMP)/neutrino-mp $(BUILD_TMP)/neutrino-mp.org
+	cp -ra $(BUILD_SRC)/neutrino $(BUILD_SRC)/neutrino.org
 	$(FINISH_BUILD)
 
