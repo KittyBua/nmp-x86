@@ -5,3 +5,4 @@ build_tmp/*
 own_build/*
 own_patch/*
 build_source/*
+Archive/*

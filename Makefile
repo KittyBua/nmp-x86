@@ -10,10 +10,10 @@
 # no checking is done for that
 ####################################################
 
-ARCHIVE    = $(HOME)/Archive
+ARCHIVE    = $(BASE_DIR)/Archive
 BASE_DIR   = $(PWD)
 BUILD_SRC  = $(BASE_DIR)/build_source
-BUILD_TMP        = $(BASE_DIR)/build_tmp
+BUILD_TMP  = $(BASE_DIR)/build_tmp
 SCRIPTS    = $(BASE_DIR)/scripts
 
 BOXTYPE    = generic
@@ -89,7 +89,7 @@ export CC CXX PATH
 export LUA_PATH=$(DEST)/share/lua/5.2/?.lua;;
 
 ### in case no frontend is available uncomment next 3 lines
-#export SIMULATE_FE=1
+export SIMULATE_FE=1
 #export HAL_NOAVDEC=1
 #export HAL_DEBUG=0xff
 export NO_SLOW_ADDEVENT=1
