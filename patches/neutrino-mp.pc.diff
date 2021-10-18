@@ -14,14 +14,14 @@ diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' neutrino-mp.org/s
 --- neutrino-mp.org/src/neutrino.cpp	2014-11-24 23:19:40.108439603 +0100
 +++ neutrino-mp/src/neutrino.cpp	2014-11-24 23:21:00.332438876 +0100
 @@ -665,7 +665,7 @@
- 	std::string timeshiftDir;
- 	if(g_settings.timeshiftdir.empty()) {
- 		timeshiftDir = g_settings.network_nfs_recordingdir + "/.timeshift";
--		safe_mkdir(timeshiftDir.c_str());
-+		//safe_mkdir(timeshiftDir.c_str());
- 	} else {
- 		if(g_settings.timeshiftdir != g_settings.network_nfs_recordingdir)
- 			timeshiftDir = g_settings.timeshiftdir;
+ 	if (g_settings.timeshiftdir.empty())
+ 	{
+ 		timeshiftdir = g_settings.network_nfs_recordingdir + "/.timeshift";
+-		safe_mkdir(timeshiftdir.c_str());
++		//safe_mkdir(timeshiftdir.c_str());
+ 	}
+ 	else
+ 	{
 @@ -2310,9 +2310,9 @@
  		saveSetup(NEUTRINO_SETTINGS_FILE);
  	}

@@ -7,7 +7,7 @@ LIBDVBSI_VER=ff57e58
 GITBRANCHNMP=master
 GITBRANCHSTBHAL=master
 
-ifeq ($(FLAVOUR), classic)
+ifeq ($(FLAVOUR), ddt)
 GIT_URL=https://github.com
 GITNAMENMP=Duckbox-Developers
 GITREPONMP=neutrino-ddt
@@ -16,20 +16,19 @@ GITREPOSTBHAL=libstb-hal-ddt
 N_PATCHES += $(MP_PATCHES)
 else
 ifeq ($(FLAVOUR), max)
-GIT_URL=https://bitbucket.org
-GITNAMENMP=max_10
-GITREPONMP=neutrino-mp-max
-GITNAMESTBHAL=max_10
+GIT_URL=https://github.com
+GITNAMENMP=maxwiesel
+GITREPONMP=neutrino-max
+GITNAMESTBHAL=maxwiesel
 GITREPOSTBHAL=libstb-hal-max
 N_PATCHES += $(MAX_PATCHES)
 else
 ifeq  ($(FLAVOUR), ni)
-GIT_URL=https://bitbucket.org
+GIT_URL=https://github.com
 GITNAMENMP=neutrino-images
-GITREPONMP=ni-neutrino-hd
-GITBRANCHNMP=ni/mp/tuxbox
+GITREPONMP=ni-neutrino
 GITNAMESTBHAL=neutrino-images
-GITREPOSTBHAL=ni-libstb-hal-next
+GITREPOSTBHAL=ni-libstb-hal
 else
 ifeq ($(FLAVOUR), franken)
 GIT_URL=https://github.com
@@ -46,21 +45,8 @@ GITREPONMP=gui-neutrino
 GITNAMESTBHAL=tuxbox-neutrino
 GITREPOSTBHAL=library-stb-hal
 GITBRANCHSTBHAL=mpx
-#GITBRANCHNMP=pu/mp
-#N_PATCHES += $(PATCHES)/neutrino-mp.tuxbox.diff
 N_PATCHES += $(TB_PATCHES)
 LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
-else
-ifeq ($(FLAVOUR), vanilla)
-GIT_URL=https://github.com
-GITNAMENMP=neutrino-mp
-GITREPONMP=neutrino-mp
-GITNAMESTBHAL=neutrino-mp
-GITREPOSTBHAL=libstb-hal
-N_PATCHES += $(PATCHES)/neutrino-mp.unicable2-jess.diff
-N_PATCHES += $(VA_PATCHES)
-LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
-LH_PATCHES += $(PATCHES)/libstb-hal.ffmpeg.diff
 else
 ifeq ($(FLAVOUR), skinned)
 GIT_URL=https://github.com
@@ -77,7 +63,6 @@ GITREPONMP=neutrino-tangos
 GITNAMESTBHAL=TangoCash
 GITREPOSTBHAL=libstb-hal-tangos
 N_PATCHES += $(TG_PATCHES)
-endif
 endif
 endif
 endif

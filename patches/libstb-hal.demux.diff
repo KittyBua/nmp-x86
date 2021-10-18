@@ -1,6 +1,6 @@
 diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' libstb-hal.org/generic-pc/dmx.cpp libstb-hal/generic-pc/dmx.cpp
---- libstb-hal.org/generic-pc/dmx.cpp	2017-03-14 13:42:22.564360799 +0100
-+++ libstb-hal/generic-pc/dmx.cpp	2017-03-14 22:21:20.675479386 +0100
+--- libstb-hal.org/libgeneric-pc/dmx.cpp	2017-03-14 13:42:22.564360799 +0100
++++ libstb-hal/libgeneric-pc/dmx.cpp	2017-03-14 22:21:20.675479386 +0100
 @@ -65,11 +65,13 @@
  };
  

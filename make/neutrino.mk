@@ -61,7 +61,6 @@ $(N_OBJ)/config.status: | $(N_OBJ) $(N_SRC) $(LH_OBJ)/libstb-hal.a
 			--enable-fribidi \
 			--enable-lcd4linux \
 			--disable-upnp \
-			--disable-pip \
 			$(N_CONFIG_OPTS) \
 			--with-default-theme=TangoCash \
 			--with-target=native --with-boxtype=$(BOXTYPE) \
