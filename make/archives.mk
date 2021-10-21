@@ -1,5 +1,4 @@
 # 
-FFMPEG_VER=4.3.1
 LUA_VER=5.2.4
 LUAPOSIX_VER=31
 LIBDVBSI_VER=ff57e58
@@ -72,10 +71,6 @@ endif
 
 GITCLONE_NMP=git clone -b $(GITBRANCHNMP) $(GIT_URL)
 GITCLONE_STBHAL=git clone -b $(GITBRANCHSTBHAL) $(GIT_URL)
-
-# ffmpeg
-$(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2:
-	$(WGET) http://www.ffmpeg.org/releases/ffmpeg-$(FFMPEG_VER).tar.bz2
 
 # luaposix: posix bindings for lua
 $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz:

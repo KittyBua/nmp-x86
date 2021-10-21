@@ -103,7 +103,7 @@ UNTAR = tar -C $(BUILD_SRC) -xf $(ARCHIVE)
 BOOTSTRAP = $(ARCHIVE) $(BUILD_SRC) $(D)
 
 # first target is default...
-default: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua neutrino
+default: bootstrap $(D)/libdvbsipp $(D)/lua neutrino
 	make run
 
 $(ARCHIVE):

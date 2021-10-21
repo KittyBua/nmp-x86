@@ -24,7 +24,7 @@ N_CONFIG_OPTS += \
 	--with-controldir=$(DEST)/share/tuxbox/neutrino/control \
 	--with-controldir_var=$(DEST)/var/tuxbox/control
 
-neutrino: bootstrap $(D)/libdvbsipp $(D)/ffmpeg $(D)/lua $(N_OBJ)/config.status
+neutrino: bootstrap $(D)/libdvbsipp $(D)/lua $(N_OBJ)/config.status
 	$(START_BUILD)
 	-rm $(N_OBJ)/src/neutrino # force relinking on changed libstb-hal
 	$(MAKE) -C $(N_OBJ) CC="ccache gcc" CXX="ccache g++" install
