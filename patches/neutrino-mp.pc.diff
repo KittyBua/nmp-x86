@@ -35,19 +35,3 @@ diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' neutrino-mp.org/s
  
  	bootstatus->hide();
  	delete bootstatus;
-diff -NEbur '--exclude-from=/home/tango/nmp_4x86/diff-exclude' neutrino-mp.org/src/gui/movieplayer.cpp neutrino-mp/src/gui/movieplayer.cpp
---- neutrino-mp.org/src/gui/movieplayer.cpp	2018-01-05 13:31:56.805244098 +0100
-+++ neutrino-mp/src/gui/movieplayer.cpp	2018-02-11 14:16:03.116062693 +0100
-@@ -152,10 +152,12 @@
- 		delete bookmarkmanager;
- 		bookmarkmanager = NULL;
- 	}
-+/*
- 	if(playback){
- 		delete playback;
- 		playback = NULL;
- 	}
-+*/
- 	if (this == instance_mp) {
- 		delete instance_bg;
- 		instance_bg = NULL;
