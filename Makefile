@@ -37,6 +37,7 @@ N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
 
 CFLAGS     = -funsigned-char -g -W -Wall -Wshadow -O2
+CFLAGS    += -Wno-unused-result
 CFLAGS    += -rdynamic
 CFLAGS    += -DPEDANTIC_VALGRIND_SETUP
 CFLAGS    += -DDYNAMIC_LUAPOSIX
@@ -51,16 +52,11 @@ CFLAGS    += -pthread
 CFLAGS    += $(shell pkg-config --cflags --libs glib-2.0)
 CFLAGS    += $(shell pkg-config --cflags --libs libxml-2.0)
 ### GST
-ifeq ($(shell pkg-config --exists gstreamer-0.10 && echo 1),1)
-	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-0.10)
-	GST-PLAYBACK = --enable-gstreamer_01=yes
-endif
-
 ifeq ($(shell pkg-config --exists gstreamer-1.0 && echo 1),1)
 	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-1.0)
 	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-audio-1.0)
 	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-video-1.0)
-	GST-PLAYBACK = --enable-gstreamer_10=yes
+	GST-PLAYBACK = --enable-gstreamer=yes
 endif
 
 ### workaround for debian's non-std sigc++ locations
