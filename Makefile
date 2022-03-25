@@ -162,8 +162,8 @@ copy:
 	cp -r $(N_SRC) $(N_SRC).org
 
 diff:
-	make diff-n
-	make diff-lh
+	make neutrino-diff
+	make libstb-hal-diff
 
 diff-n:
 	cd $(BUILD_SRC) && \
@@ -172,6 +172,10 @@ diff-n:
 diff-lh:
 	cd $(BUILD_SRC) && \
 	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/libstb-hal.pc.diff ; [ $$? -eq 1 ]
+
+neutrino-diff \
+libstb-hal-diff:
+	( cd $(BUILD_SRC) && diff -Nur --exclude-from=$(SCRIPTS)/diff-exclude $(subst -diff,,$@).org $(subst -diff,,$@) > $(PWD)/$(subst -diff,-`date +%d.%m.%Y_%H:%M`.patch,$@) ; [ $$? -eq 1 ] )
 
 include make/buildenv.mk
 include make/archives.mk
