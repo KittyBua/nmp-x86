@@ -3,75 +3,6 @@ LUA_VER=5.2.4
 LUAPOSIX_VER=31
 LIBDVBSI_VER=ff57e58
 
-GITBRANCHNMP=master
-GITBRANCHSTBHAL=master
-
-ifeq ($(FLAVOUR), ddt)
-GIT_URL=https://github.com
-GITNAMENMP=Duckbox-Developers
-GITREPONMP=neutrino-ddt
-GITNAMESTBHAL=Duckbox-Developers
-GITREPOSTBHAL=libstb-hal-ddt
-N_PATCHES += $(MP_PATCHES)
-else
-ifeq ($(FLAVOUR), max)
-GIT_URL=https://github.com
-GITNAMENMP=maxwiesel
-GITREPONMP=neutrino-max
-GITNAMESTBHAL=maxwiesel
-GITREPOSTBHAL=libstb-hal-max
-N_PATCHES += $(MAX_PATCHES)
-else
-ifeq  ($(FLAVOUR), ni)
-GIT_URL=https://github.com
-GITNAMENMP=neutrino-images
-GITREPONMP=ni-neutrino
-GITNAMESTBHAL=neutrino-images
-GITREPOSTBHAL=ni-libstb-hal
-else
-ifeq ($(FLAVOUR), franken)
-GIT_URL=https://github.com
-GITNAMENMP=fs-basis
-GITREPONMP=neutrino-mp-fs
-GITNAMESTBHAL=fs-basis
-GITREPOSTBHAL=libstb-hal-fs
-N_PATCHES += $(FS_PATCHES)
-else
-ifeq ($(FLAVOUR), tuxbox)
-GIT_URL=https://github.com
-GITNAMENMP=tuxbox-neutrino
-GITREPONMP=gui-neutrino
-GITNAMESTBHAL=tuxbox-neutrino
-GITREPOSTBHAL=library-stb-hal
-GITBRANCHSTBHAL=mpx
-N_PATCHES += $(TB_PATCHES)
-LH_PATCHES += $(PATCHES)/libstb-hal.demux.diff
-else
-ifeq ($(FLAVOUR), skinned)
-GIT_URL=https://github.com
-GITNAMENMP=TangoCash
-GITREPONMP=neutrino-tangos
-GITBRANCHNMP=skinned
-GITNAMESTBHAL=TangoCash
-GITREPOSTBHAL=libstb-hal-tangos
-N_PATCHES += $(TG_PATCHES)
-else
-GIT_URL=https://github.com
-GITNAMENMP=TangoCash
-GITREPONMP=neutrino-tangos
-GITNAMESTBHAL=TangoCash
-GITREPOSTBHAL=libstb-hal-tangos
-N_PATCHES += $(TG_PATCHES)
-endif
-endif
-endif
-endif
-endif
-endif
-
-GITCLONE_NMP=git clone -b $(GITBRANCHNMP) $(GIT_URL)
-GITCLONE_STBHAL=git clone -b $(GITBRANCHSTBHAL) $(GIT_URL)
-
 # luaposix: posix bindings for lua
 $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz:
 	$(WGET) https://github.com/luaposix/luaposix/archive/v$(LUAPOSIX_VER).tar.gz -O $@
@@ -83,29 +14,3 @@ $(ARCHIVE)/lua-$(LUA_VER).tar.gz:
 # libdvbsi
 $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2:
 	$(SCRIPTS)/get-git-archive.sh git://git.opendreambox.org/git/obi/libdvbsi++.git $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)
-
-# stb-hal
-$(LH_SRC):
-	$(START_BUILD)
-	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] && \
-	(cd $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; git pull; cd "$(BUILD_SRC)";); \
-	[ -d "$(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git" ] || \
-	$(GITCLONE_STBHAL)/$(GITNAMESTBHAL)/$(GITREPOSTBHAL).git $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git; \
-	cp -ra $(ARCHIVE)/$(GITNAMESTBHAL)-$(GITREPOSTBHAL).git $(BUILD_SRC)/libstb-hal;\
-	cp -ra $(BUILD_SRC)/libstb-hal $(BUILD_SRC)/libstb-hal.org
-	$(call post_patch,$(LH_SRC),$(LH_PATCHES))
-	$(FINISH_BUILD)
-
-# neutrino mp
-$(N_SRC):
-	$(START_BUILD)
-	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] && \
-	(cd $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; git pull; cd "$(BASE_DIR)";); \
-	[ -d "$(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git" ] || \
-	$(GITCLONE_NMP)/$(GITNAMENMP)/$(GITREPONMP).git $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git; \
-	cp -ra $(ARCHIVE)/$(GITNAMENMP)-$(GITREPONMP).git $(BUILD_SRC)/neutrino; \
-	(cd $(BUILD_SRC)/neutrino; git checkout $(GITBRANCHNMP);); \
-	$(call post_patch,$(N_SRC),$(N_PATCHES))
-	cp -ra $(BUILD_SRC)/neutrino $(BUILD_SRC)/neutrino.org
-	$(FINISH_BUILD)
-

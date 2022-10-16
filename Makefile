@@ -12,26 +12,24 @@
 
 ARCHIVE    = $(BASE_DIR)/Archive
 BASE_DIR   = $(PWD)
-BUILD_SRC  = $(BASE_DIR)/build_source
 BUILD_TMP  = $(BASE_DIR)/build_tmp
+SOURCE_DIR = $(BASE_DIR)/build_source
 SCRIPTS    = $(BASE_DIR)/scripts
 
 BOXTYPE    = generic
 DEST       = $(BASE_DIR)/build_sysroot
 D          = $(BASE_DIR)/deps
 
-LH_SRC     = $(BUILD_SRC)/libstb-hal
-LH_OBJ     = $(BUILD_TMP)/libstb-hal
-N_SRC      = $(BUILD_SRC)/neutrino
-N_OBJ      = $(BUILD_TMP)/neutrino
+N_OBJDIR   = $(BUILD_TMP)/$(NEUTRINO)
+LH_OBJDIR  = $(BUILD_TMP)/$(LIBSTB_HAL)
 
 PATCHES    = $(BASE_DIR)/patches
 
 PARALLEL_JOBS := $(shell echo $$((1 + `getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1`)))
 override MAKE = make $(if $(findstring j,$(filter-out --%,$(MAKEFLAGS))),,-j$(PARALLEL_JOBS)) $(SILENT_OPT)
 
-#supported flavours: ddt,max,ni,franken,tuxbox,skinned,tangos (default)
-FLAVOUR	  ?= tangos
+#supported flavours: DDT,MAX,NI,TUXBOX,TANGOSEVO,TANGOSSKINNED,TANGOS (default)
+FLAVOUR	  ?= TANGOS
 
 N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
@@ -88,15 +86,15 @@ export LUA_PATH=$(DEST)/share/lua/5.2/?.lua;;
 export SIMULATE_FE=1
 #export HAL_NOAVDEC=1
 #export HAL_DEBUG=0xff
-export NO_SLOW_ADDEVENT=1
+#export NO_SLOW_ADDEVENT=1
 
 # wget tarballs into archive directory
 WGET = wget --no-check-certificate -t6 -T20 -c -P $(ARCHIVE)
 
 # unpack tarballs
-UNTAR = tar -C $(BUILD_SRC) -xf $(ARCHIVE)
+UNTAR = tar -C $(SOURCE_DIR) -xf $(ARCHIVE)
 
-BOOTSTRAP = $(ARCHIVE) $(BUILD_SRC) $(D)
+BOOTSTRAP = $(ARCHIVE) $(SOURCE_DIR) $(D)
 
 # first target is default...
 default: bootstrap $(D)/libdvbsipp $(D)/lua neutrino
@@ -105,8 +103,8 @@ default: bootstrap $(D)/libdvbsipp $(D)/lua neutrino
 $(ARCHIVE):
 	mkdir -p $(ARCHIVE)
 
-$(BUILD_SRC):
-	mkdir -p $(BUILD_SRC)
+$(SOURCE_DIR):
+	mkdir -p $(SOURCE_DIR)
 
 $(D):
 	mkdir -p $(D)
@@ -129,53 +127,38 @@ $(BUILD_TMP)/libstb-hal: | $(BUILD_TMP)
 	mkdir -p $@
 
 clean:
-	-$(MAKE) -C $(N_OBJ) clean
-	-$(MAKE) -C $(LH_OBJ) clean
-	rm -rf $(N_OBJ) $(LH_OBJ)
+	-$(MAKE) -C $(N_OBJDIR) clean
+	-$(MAKE) -C $(LH_OBJDIR) clean
+	rm -rf $(N_OBJDIR) $(LH_OBJDIR)
 
 distclean:
-	rm -rf $(BUILD_SRC)
+	rm -rf $(SOURCE_DIR)
 	rm -rf $(D)
 	rm -rf $(DEST)
 	rm -rf $(BUILD_TMP)
 
 update:
-	rm -rf $(LH_SRC)
-	rm -rf $(LH_SRC).org
-	rm -rf $(N_SRC)
-	rm -rf $(N_SRC).org
+	make libstb-hal-distclean
+	make neutrino-distclean
 	rm -rf $(BUILD_TMP)
 	make default
 
 update-s:
-	rm -rf $(LH_SRC)
-	rm -rf $(LH_SRC).org
-	rm -rf $(N_SRC)
-	rm -rf $(N_SRC).org
+	make libstb-hal-distclean
+	make neutrino-distclean
 	rm -rf $(BUILD_TMP)
 	make neutrino
 
-copy:
-	rm -rf $(LH_SRC).org
-	cp -r $(LH_SRC) $(LH_SRC).org
-	rm -rf $(N_SRC).org
-	cp -r $(N_SRC) $(N_SRC).org
+#
+# patch helper
+#
+neutrino%-patch \
+libstb-hal%-patch:
+	( cd $(SOURCE_DIR) && diff -Nur --exclude-from=$(SCRIPTS)/diff-exclude $(subst -patch,,$@).org $(subst -patch,,$@) > $(BASE_DIR)/$(subst -patch,-`date +%d.%m.%Y_%H:%M`.patch,$@) ; [ $$? -eq 1 ] )
 
-diff:
-	make neutrino-diff
-	make libstb-hal-diff
-
-diff-n:
-	cd $(BUILD_SRC) && \
-	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude neutrino.org neutrino > $(PWD)/neutrino.pc.diff ; [ $$? -eq 1 ]
-
-diff-lh:
-	cd $(BUILD_SRC) && \
-	diff -NEur --exclude-from=$(SCRIPTS)/diff-exclude libstb-hal.org libstb-hal > $(PWD)/libstb-hal.pc.diff ; [ $$? -eq 1 ]
-
-neutrino-diff \
-libstb-hal-diff:
-	( cd $(BUILD_SRC) && diff -Nur --exclude-from=$(SCRIPTS)/diff-exclude $(subst -diff,,$@).org $(subst -diff,,$@) > $(PWD)/$(subst -diff,-`date +%d.%m.%Y_%H:%M`.patch,$@) ; [ $$? -eq 1 ] )
+neutrino%-diff \
+libstb-hal%-diff:
+	( cd $(SOURCE_DIR) && diff -Nur --exclude-from=$(SCRIPTS)/diff-exclude $(subst -diff,,$@).dev $(subst -diff,,$@) > $(BASE_DIR)/$(subst -diff,-`date +%d.%m.%Y_%H:%M`.patch,$@) ; [ $$? -eq 1 ] )
 
 include make/buildenv.mk
 include make/archives.mk
