@@ -62,7 +62,8 @@ else ifeq  ($(FLAVOUR), TANGOSEVO)
 GIT_URL     ?= $(GITHUB)/TangoCash
 NEUTRINO     = neutrino-tangos
 NMP_BRANCH  ?= evo
-NMP_PATCHES  = $(NEUTRINO_TANGOS_PATCHES)
+NMP_PATCHES  = neutrino-tangos-ffmpeg.patch
+NMP_PATCHES += $(NEUTRINO_TANGOS_PATCHES)
 else ifeq  ($(FLAVOUR), DDT)
 GIT_URL     ?= $(GITHUB)/Duckbox-Developers
 NEUTRINO     = neutrino-ddt
@@ -171,7 +172,7 @@ libstb-hal-distclean:
 
 # -----------------------------------------------------------------------------
 
-$(D)/neutrino.do_prepare: | bootstrap $(D)/libdvbsipp $(D)/lua $(D)/graphlcd $(LIBDEP)
+$(D)/neutrino.do_prepare: | bootstrap $(D)/libdvbsipp $(D)/lua $(D)/graphlcd $(D)/ffmpeg $(LIBDEP)
 	$(START_BUILD)
 	rm -rf $(SOURCE_DIR)/$(NEUTRINO)
 	rm -rf $(SOURCE_DIR)/$(NEUTRINO).org

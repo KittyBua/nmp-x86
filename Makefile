@@ -29,7 +29,7 @@ PARALLEL_JOBS := $(shell echo $$((1 + `getconf _NPROCESSORS_ONLN 2>/dev/null || 
 override MAKE = make $(if $(findstring j,$(filter-out --%,$(MAKEFLAGS))),,-j$(PARALLEL_JOBS)) $(SILENT_OPT)
 
 #supported flavours: DDT,MAX,NI,TUXBOX,TANGOSEVO,TANGOSSKINNED,TANGOS (default)
-FLAVOUR	  ?= TANGOS
+FLAVOUR	  ?= TANGOSEVO
 
 N_PATCHES  = $(PATCHES)/neutrino-mp.pc.diff
 LH_PATCHES = $(PATCHES)/libstb-hal.pc.diff
@@ -49,13 +49,6 @@ CFLAGS    += $(shell pkg-config --cflags --libs freetype2)
 CFLAGS    += -pthread
 CFLAGS    += $(shell pkg-config --cflags --libs glib-2.0)
 CFLAGS    += $(shell pkg-config --cflags --libs libxml-2.0)
-### GST
-ifeq ($(shell pkg-config --exists gstreamer-1.0 && echo 1),1)
-	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-1.0)
-	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-audio-1.0)
-	CFLAGS    += $(shell pkg-config --cflags --libs gstreamer-video-1.0)
-	GST-PLAYBACK = --enable-gstreamer=yes
-endif
 
 ### workaround for debian's non-std sigc++ locations
 CFLAGS += -I/usr/include/sigc++-2.0
@@ -73,13 +66,13 @@ CXXFLAGS = $(CFLAGS)
 export CFLAGS CXXFLAGS
 
 # Prepend ccache into the PATH
-PATH := $(PATH):/usr/lib/ccache/
+PATH := $(DEST)/bin:$(PATH):/usr/lib/ccache/
 CC    = ccache gcc
 CXX   = ccache g++
 export CC CXX PATH
 
 ### export our custom lib dir
-#export LD_LIBRARY_PATH=$(DEST)/lib
+export LD_LIBRARY_PATH=$(DEST)/lib
 export LUA_PATH=$(DEST)/share/lua/5.2/?.lua;;
 
 ### in case no frontend is available uncomment next 3 lines
@@ -97,7 +90,7 @@ UNTAR = tar -C $(SOURCE_DIR) -xf $(ARCHIVE)
 BOOTSTRAP = $(ARCHIVE) $(SOURCE_DIR) $(D)
 
 # first target is default...
-default: bootstrap $(D)/libdvbsipp $(D)/lua neutrino
+default: bootstrap $(D)/libdvbsipp $(D)/lua $(D)/ffmpeg neutrino
 	make run
 
 $(ARCHIVE):
@@ -164,6 +157,7 @@ include make/buildenv.mk
 include make/archives.mk
 include make/system-libs.mk
 include make/neutrino.mk
+include make/ffmpeg.mk
 include Makefile.local
 
 PHONY = update
