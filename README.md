@@ -1,11 +1,11 @@
 # nmp-x86/x64
 small build environment for nmp-tangos (or other flavours) for x86/x64
 
-tested with Ubuntu Mate 16.04 x64
+tested with Ubuntu Mate 22.04 x64
 
 | flavour | repo | branch |
 |---|---|---|
-|**tangos**|**TangoCash/neutrino-mp-tangos**|**master**|
+|**tangosevo**|**TangoCash/neutrino-mp-tangos**|**evo**|
 |classic|Duckbox-Developers/neutrino-mp-ddt|master|
 |franken|fs-basis/neutrino-mp-fs|master|
 |tuxbox|tuxbox-neutrino/gui-neutrino|master|
@@ -22,14 +22,11 @@ _or_
 ### prerequisites:
 
 `sudo apt-get install`
-- `build-essential autoconf libtool libtool-bin g++ gdb ccache libsigc++-2.0-dev`
+- `build-essential autoconf libtool libtool-bin g++ gdb ccache mpv libsigc++-2.0-dev`
 - `libavformat-dev libswscale-dev libopenthreads-dev libbz2-dev`
 - `libglew-dev freeglut3-dev libcurl4-gnutls-dev libfreetype6-dev libid3tag0-dev`
 - `libmad0-dev libogg-dev libpng12-dev libgif-dev libjpeg62-dev libvorbis-dev`
 - `libflac-dev libblkid-dev libao-dev libfribidi0 libfribidi-dev`
-- `libgstreamer1.0-0 libgstreamer-plugins-base1.0-0`
-- `libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-good1.0-0`
-- `libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev`
-- `libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-good1.0-dev`
+
 
 
