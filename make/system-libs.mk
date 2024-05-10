@@ -33,7 +33,7 @@ $(D)/libdvbsipp: $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2
 #GRAPHLCD_VER = 55d4bd8
 GRAPHLCD_VER = aafdbdf
 GRAPHLCD_SOURCE = graphlcd-git-$(GRAPHLCD_VER).tar.bz2
-GRAPHLCD_URL = https://projects.vdr-developer.org/git/graphlcd-base.git
+GRAPHLCD_URL = https://vdr-projects.e-tobi.net/git/graphlcd-base
 GRAPHLCD_PATCH1  = graphlcd-git-$(GRAPHLCD_VER).patch
 GRAPHLCD_PATCH2  = graphlcd-vuplus4k.patch
 
