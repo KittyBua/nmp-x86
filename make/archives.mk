@@ -12,5 +12,5 @@ $(ARCHIVE)/lua-$(LUA_VER).tar.gz:
 	$(WGET) http://www.lua.org/ftp/lua-$(LUA_VER).tar.gz
 
 # libdvbsi
-$(ARCHIVE)/libdvbsi-$(LIBDVBSI_VER).tar.bz2:
-	$(SCRIPTS)/get-git-archive.sh https://github.com/mtdcr/libdvbsi/releases/download/$(LIBDVBSI_VERSION) $(notdir $@) $(ARCHIVE)
+$(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2:
+	$(SCRIPTS)/get-git-archive.sh https://github.com/mtdcr/libdvbsi/releases/download/ $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)
