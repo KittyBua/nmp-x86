@@ -1,7 +1,7 @@
 # 
 LUA_VER=5.2.4
 LUAPOSIX_VER=31
-LIBDVBSI_VER=ff57e58
+LIBDVBSI_VER=0.3.9
 
 # luaposix: posix bindings for lua
 $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).tar.gz:
@@ -12,5 +12,5 @@ $(ARCHIVE)/lua-$(LUA_VER).tar.gz:
 	$(WGET) http://www.lua.org/ftp/lua-$(LUA_VER).tar.gz
 
 # libdvbsi
-$(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2:
-	$(SCRIPTS)/get-git-archive.sh git://git.opendreambox.org/git/obi/libdvbsi++.git $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)
+$(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2:
+	$(SCRIPTS)/get-git-archive.sh https://github.com/mtdcr/libdvbsi/releases/download/ $(LIBDVBSI_VER) $(notdir $@) $(ARCHIVE)

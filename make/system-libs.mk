@@ -16,11 +16,11 @@ $(D)/lua: $(ARCHIVE)/lua-$(LUA_VER).tar.gz $(ARCHIVE)/luaposix-v$(LUAPOSIX_VER).
 		rm -rf $(DEST)/man
 	touch $@
 
-$(D)/libdvbsipp: $(ARCHIVE)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2
-	rm -rf $(SOURCE_DIR)/libdvbsi-git-$(LIBDVBSI_VER); \
-	$(UNTAR)/libdvbsi-git-$(LIBDVBSI_VER).tar.bz2
-	set -e; cd $(SOURCE_DIR)/libdvbsi-git-$(LIBDVBSI_VER); \
-		$(PATCH)/libdvbsi-git-$(LIBDVBSI_VER).patch; \
+$(D)/libdvbsipp: $(ARCHIVE)/libdvbsi-$(LIBDVBSI_VER).tar.bz2
+	rm -rf $(SOURCE_DIR)/libdvbsi-$(LIBDVBSI_VER); \
+	$(UNTAR)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
+	set -e; cd $(SOURCE_DIR)/libdvbsi-$(LIBDVBSI_VER); \
+		$(PATCH)/libdvbsi-$(LIBDVBSI_VER).patch; \
 		./autogen.sh; \
 		./configure --prefix=$(DEST); \
 		$(MAKE); \
